@@ -168,4 +168,122 @@ Using the whois database, you can conduct searches based on a variety of differe
 **Looking up a domain name at a particular registrar**
 ![bf13642dfbc721be5b1058c0df57c93e.png](../_resources/bf13642dfbc721be5b1058c0df57c93e.png)
 
+So if the attacker only knows the name of the target, they can use this whois database to search for more information about the given organization, including registered domain names, name servers, contacts, and so on.
+
+**Results of the WhoIs Database**
+![4eb9f4701663e19226d2a98a52d7f73d.png](../_resources/4eb9f4701663e19226d2a98a52d7f73d.png)
+
+## IP Address Assignments Through ARIN and Related Sites
+An organization called the American Registry for Internet Numbers (ARIN) maintains a Web-accessible whois style database that allows users to gather information about who owns particular IP address ranges, based on company or domain names, for organizations in North America, a portion of the Caribbean, and subequatorial Africa. 
+
+So whereas the registrar whois database tells users about particular contact information, ARIN database contains all IP addresses assigned to a particular organization in those geographies. You can access the ARIN whois database at ```www.arin.net/whois/arinwhois.html``` You'll need another wayback machine.
+
+## Defense Against WhoIs Searches
+You can't and shouldn't try to defend against WhoIs searches. Its important that we can tie organizations back to their domains and IPs in case their systems are being used in attacks. 
+
+
+# The Domain Name System
+DNS is an incredibly important component of the Internet and another immensely useful source of recon information. DNS is a hierarchical database distributed around the world that stores a variety of information, including IP addresses, domain names, and mail server information. 
+- DNS servers also referred to as name servers, store this information and make up the hierarchy
+- DNS makes the Internet usable by allowing people to access machines by typing a human-readable name without having to know the IP address. 
+
+![47d1aeb56f936d640ff2a6956e89a5cf.png](../_resources/47d1aeb56f936d640ff2a6956e89a5cf.png)
+
+At the top of the DNS hierarchy are the root DNS servers, which contain information about the DNS servers in the next level down the hierarchy. Various authorities around the world maintain and run the 13 root DNS servers on the Internet, which act as a starting point for DNS searches. 
+
+The next level down the hierarchy includes DNS servers for the .com, .net, and .org domains as well as many others. Note that in the DNS hierarchy, the preceding dot (".") is not inlcuded in front of the com, net, and org DNS server names.
+
+Going down the hierarchy another level, we find DNS servers for individual organizations and networks. These DNS servers contain information about other lower level DNS servers, as well las the IP addresses of individual machines. 
+
+Using a process called resolving, users and programs search the DNS hierarchy for information about given domain names. 
+
+![02f302ee2f72fae06171d61166cb69b5.png](../_resources/02f302ee2f72fae06171d61166cb69b5.png)
+To begin a DNS search for a name like www.counterhack.net, client software first checks a local configuration file (called the hosts file) as well as a local cache on the client machine to see if it already knows the IP address associated with the domain name. 
+
+If not a client sends a DNS request to its local DNS server asking for the IP address associated with the domain name as shown in the figure above. 
+
+If the local DNS server has the information cached from a previous DNS search, or has the required record in its own DNS master files, it sends a response. If the local DNS server doesn't have the information, it resolves the name by doing a search of the DNS servers on the Internet. 
+- The most common type of search done by local DNS servers is recursive search where various servers in the DNS hierarchy are systematically queried to find the desired information. 
+
+On a windows machine you can dump your client's DNS cache by typing the command ```ipconfig /displaydns``` at a command prompt shown in the figure below. 
+![e27a50ab406dec8a895a38ed9fd8b2ad.png](../_resources/e27a50ab406dec8a895a38ed9fd8b2ad.png)
+
+A DNS server just houses a bunch of DNS records like those shown below. For example, the DNS server might have 20 address records for the addresses of mail servers, File Transfer Protocol (FTP) servers, and Web servers, one or two MX records specifying which server will accept mail, and two DNS server records spelling out DNS servers themselves. 
+![9719593c60e4cc7ee2566b23efa25047.png](../_resources/9719593c60e4cc7ee2566b23efa25047.png)
+
+## Interrogating DNS Servers
+First, the attacker needs to determine one or more DNS servers for the target organization. This information is readily available in the registration records obtained from the registrar's whois database searches, as discussed in the previous section. 
+
+In the registrar records, these DNS servers for the target organization are listed as name servers and domain servers, depending on the specific registrar. In our example from figure 5.7, the DNS servers have IP addresses 10.1.1.34 and 10.2.42.1. The first is the primary DNS server and  the other is the secondary DNS server. 
+
+Using this DNS server information an attacker has a variety of tools to choose from getting DNS information. 
+- One of the most common tools used to querry DNS servers is the ```nslookup``` command, which is included in modern versions of Windows and most variations of UNIX and Linux. 
+- By simply typing "nslookup" an attacker can invoke the program and begin interrogating name servers. Attackers typically attempt to perform a zone transfer, an operation that asks the name server to send all information is has about a given domain, a group of information referred to collectively as a zone file. 
+- Zone transfers were originally created so secondary DNS servers can get updates from primary DNS servers. 
+
+To conduct a zone transfer, the nslookup command must be instructed to use the target's primary and secondary DNS server, using ```server [target_DNS_server]``` command. Then, nslookup must be instructed to look for any type of record by using the ```set type=any``` directive at the command-line. The zone transfer is initiated by entering ```ls -d [target_domain]```, which requests the information and displays it in the nslookup output. The following commands show a zone transfer for the counterhack.net domain:
+```
+ $ nsloookup
+ Default: Server: evil.attacker.com
+ Address: 10.200.100.45
+ 
+ > server 10.1.1.34
+ 
+ Default Server: ns1.counterhack.net
+ Address: 10.1.1.34
+ 
+ > set type=any
+ > ls -d counterhack.net
+ 
+ 1D IN NS server = ns1.counterhack.net
+ ssytem1 1D IN A 10.1.1.36
+ ...
+ 
+```
+![5d64d469ed85844c87c4423082a773bb.png](../_resources/5d64d469ed85844c87c4423082a773bb.png)
+This zone transfer output is abbreviated for readability. Note that using a zone transfer, we have found some extremely interesting information. The first column of our output tells us a bunch of system names. One of these names (w2k3ftp) appears to indicate the operating system type and purpose of the machine. In the last column, we have the payoff: IP addresses, mail server names, and even operating system types. The text record points out an admin workstation, surely a worthwhile target. 
+
+Unfortunately on most modern Linux machines, the nslookup command has been partially incapacitated so it can no longer perform zone transfers. Therefore to run zone transfers you would need another command such as the ```dig``` command built into most Linux distributions. To make dig do a zone transfer, run the dig command like this:
+```$ dig @10.1.1.34 counterhack.net -t AXFR```
+
+This command tells dig to query the DNS server located at 10.1.1.34, send a request for information about the counterhack domain and asks for the entire zone file (which is indicated by the -t AXFR syntax)
+
+## Defenses From DNS-Based Reconnaissance
+Don't include more information than you have to in DNS. 
+- Make sure domain names do not indicate any machine's operating system type or function. 
+
+Next, you should restrict zone transfers. Zone transfers are usually required to keep a secondary DNS server in sync with a primary server. No one else has any business copying the zone files of your DNS server. The primary DNS server should allow zone transfers only from the secondary DNS server. 
+- To limit zone transfers, you need to configure your DNS server appropriately. For the most commonly used DNS server, BIND, you can use the allow-transfer directive or the xfernets directive to specify exactly the IP addresses and networks you will allow to initiate zone transfers. 
+- Configure firewalls and filtering rules to allow access to TCP port 53 on your primary DNS only from those machines that act as secondary DNS servers. While DNS uses UDP 53, TCP is what is used for zone transfers. 
+- Don't allow the secondary DNS server to accept zone transfers from anyone
+
+Employ a technique called split DNS to limit the amount of DNS information about your infrastructure that is publicly available. The general public on the Internet only needs to resolve names for a small fraction of the systems in your enterprise, such as external Web, mail, and FTP servers. There is no reason to publish on the internet DNS records for all of your sensitive internal systems. 
+- A split DNS allows you to separate the DNS records that you want the public to access from your internal names. 
+- The figure below displays a split DNS infrastructure, the internal DNS is configured to forward requests from internal users for external machines to the external DNS server. The Internal DNS acts rather like a proxy server getting a request from the inside and forwarding it out. 
+![dbce2a61ce39ec454c93f3b2d1457ef3.png](../_resources/dbce2a61ce39ec454c93f3b2d1457ef3.png)
+## General-Purpose Reconnaissance Tools
+
+### Sam Spade: A general Purpose Recon Client Tool
+AS OF 2004 NO LONGER IN SERVICE 
+![e8f278175b8d50d835bf14a980e35b74.png](../_resources/e8f278175b8d50d835bf14a980e35b74.png)
+
+### Web-Based Reconnaissance Tools: Research and Attack Portals
+Some of the most interesting Web-based reconnaissance and attack tools include the following:
+- www.samspade.org
+- www.dnsstuff.com
+- www.traceroute.org
+- www.network-tools.com
+- www.cotse.com/refs.htm
+- www.securityspace.com
+- www.dslreports.com/scan
+
+David Rhoades has created a web site called AttackPortal.net featuring a searchable database with more than 100 different Web-based recon and attack tools like those listed previously. 
+![7f5290b2902da552e2a6ec4badb9a5f8.png](../_resources/7f5290b2902da552e2a6ec4badb9a5f8.png)
+
+
 # Summary
+Many attacks start with a recon phase, whereby an attacker tries to gain as much information about a target as possible before actually attacking it. 
+
+The Web is a cornucopia of useful info for an attacker. Many orgs put info on their sites that can be quite valuable to an attacker, such as employees' contact information, business partners, and technologies in use. Attackers use web search engines, especially Google to research targets, gaining knowledge about aspects of and events in the target organization. 
+
+Whois databases provide information about a target's Internet addresses, domain-names, and contacts. The InterNIC provides a whois database from .com, .net, .org and several other top-level domain names. 
