@@ -281,5 +281,75 @@ When scanning for open ports, the scanning system sends packets to the target to
 ![071489e0859c138b97116a3e33a8bdbb.png](../_resources/071489e0859c138b97116a3e33a8bdbb.png)
 
 ## Types of Nmap Scans
+All legitimate TCP connections are established using a three-way handshake 
 
+In 3-way handshakes, the initiating system sends a packet with some inital sequence number (ISNa) and the SYN TCP control bit set. 
+
+If a service is listening on the port, the destination machine resopnds with a packet that has both the SYN and ACK control bits set, an acknowledgement of ISNa+1, and an initial sequence number for responses (ISNb). 
+
+On receiving this SYN-ACK packet, the initiator finishes the three-way handshake by sending an ACK packet, including an acknowledgement of the recipient's sequence number, ISNb+1. 
+
+At this point the three-way handshake is complete. Sequence numbers will continue to increase with each packet sent. 
+
+![9337290ab0107ee0d2f85e15011fdee7.png](../_resources/9337290ab0107ee0d2f85e15011fdee7.png)
+
+Given this understanding of TCP, we next analyze some of the scan types supported by Nmap. 
+
+### The Polite Scan: TCP Connect
+TCP Connect scans, sometimes called "plain vanilla" scans, attempt to complete the TCP three-way handshake with each target port on the system being scanned. 
+- Because they are the most polite scan, adhering to the defined TCP specifications, there is little chance a Connect scan will crash the target system.
+- They could still flood a target
+- To conduct a connect scan, the attacker's system sends out a SYN and awaits a SYN-ACK response from the target port. 
+- If the port is open, the scanning machine completes the three-way handshake with an ACK, and then gracefully tears down the connection using FIN packets 
+
+If the target port is closed, the target returns no SYN-ACK response. For closed ports, the attacker's system receives no response, a RESET packet, or an ICMP Port Unreachable packet, depending on the system type and the target network configuration. **Any of these messages means the port is closed**.
+
+Connect scans are very easy to detect. A complete connection is made to the end system, which might record the connection in its logs if full connection log is activated.
+- If an attacker scans a web server, the web server's log file indicates that a connection was opened from the attacker's IP address. 
+
+### A Little Stealthier: TCP SYN Scans
+Whereas Connect scans follow the TCP three-way handshake completely, SYN scans stop two-thirds of the way through the handshake.
+- SYN scans invovle the attacking machine sending a SYN to each target port.
+- If the port is open, the target system sends a SYN-ACK response.
+- The attacking machine will then send a RESET packet, aborting the connection before it is completed.
+- **In a SYN scan, only the first two parts of the three-way handshake occur**
+
+If the target port is closed, the attacker's system receives no response, a RESET packet, or an ICMP Port Unreachable packet, again depending on the target machine type and network architecture. 
+
+There are 2 primary benefits to SYN scans over Connect scans.
+1. SYN scans are stealthier, in that most end systems do not record activity in their logs because a true connection does not occur. (They still can be recorded by IDS/IPS, firewalls etc.)
+2. A second advantage of SYN scans is speed. Connect scans require sending more packets and waiting for the entire three-way handshake and connection tear down to complete. SYN scans require sending only SYN packets, and waiting only for the SYN-ACK. 
+
+One area of concern with SYN scans is the possibility that the target system could become flooded with outstanding SYNs, resulting in an accidental DoS attack. 
+- Nmap sends the RESET packet quickly to help prevent this, but it still could overwhelm older systems. 
+
+### Violating the Protocol Spec: TCP FIN, Xmas Tree, and Null Scans
+Connect scans followed the TCP specification perfectly, TCP SYN scans followed them two-thirds of the way. The FIN, Xmas Tree, And Null scans all violate the protocol by sending packets that are not expected at the start of the connection. 
+
+A FIN packet instructs the target system that the connection should be torn down. However during a FIN scan no connections are established. The target system just sees a bunch of packets arriving saying to tear down nonexistent connections. 
+- According to TCP specification, if a closed port receives an unexpected FIN when no connection is present, the target system should respond with a RESET. Therefore RESET indicates that the port is closed. 
+- If the port is open and an unexpected FIN arrives, the port sends nothing back. Therefore, if nothing comes back there is a raesonable chance the port is open and listening (although a firewall may have blocked the incoming packet or the response.)
+
+In a similar manner, an Xmas Tree scan sends packets with the URG, ACK, PSH, RST, SYN, and FIN control bits set. 
+- If a router or firewall is looking for specific control bits set before it allows packets in, it'll find them in an Xmas Tree scan, becuase they're all lit up with a value of 1. 
+- Furthermore, because this combination of bits is not a valid setting according to the RFC that defines TCP, some older IDSs ignore such packets. 
+
+A null scan invovles sending TCP packets with no control bits set.
+
+An xmas tree and Null scan expect the same behavior from the target system as a FIN scan: A closed port sends a RESET, and a listening port sends nothing.
+
+Unfortunately, this technique does not work against Windows-based systems, which don't follow the RFCs regarding when to send a RESET if a FIN, Xmas, or Null packet comes in. For other platforms, these scan types are very useful. 
+
+### Kicking the Ball Past the Goalie: TCP ACK Scans
+Like FIN, Xmas Tree, and Null scans, an ACK scan also violates the protocol specification, allowing an attacker to be stealthier and get through some packet filtering devices.
+- Packet filters, which can be implemented in routers or firewalls, allow or deny packets based on the contents of their packet headers, both the IP header and the TCP or UDP header. 
+- By looking at the source and destination IP addresses, source and destination ports, and TCP control bits, a packet filter determines whether it should transmit a packet or drop it. 
+
+In a common architecture, many networks are configured to allow internal network users to access an external network (most often, the Internet). In this scenario, shown below, an external packet-filtering device allows outbound traffic so that the internal machines can access servers on the external network. 
+![ff3ac3ba3eeb8416087c1fa0be7e1011.png](../_resources/ff3ac3ba3eeb8416087c1fa0be7e1011.png)
+- This packet filtering device could be a router or firewall supporting traditional packet filtering.  
+- For example, if we want to allow outbound Web access (HTTP), users need to make connections from high-numbered source ports on internal machines to destination TCP port 80 on external systems. 
+- We define a rule allowing such traffic on the packet-filtering device. 
+
+However, when an internal user accesses the external network, we have to handle the response traffic. 
 # Summary
