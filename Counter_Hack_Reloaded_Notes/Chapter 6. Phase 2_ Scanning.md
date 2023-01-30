@@ -42,7 +42,7 @@ NetStumbler, a free (but closed-source) war-driving tool written by Marius Milne
 
 Below is the result of a single 1-hour war driving exercise in Manhattan NY. 
 
-![f727ebf869b58a58dc5d4d0ca3357d96.png](../_resources/f727ebf869b58a58dc5d4d0ca3357d96.png)
+![f727ebf869b58a58dc5d4d0ca3357d96.png](../../_resources/f727ebf869b58a58dc5d4d0ca3357d96.png)
 
 As you can see, NetStumbler gathers the MAC address, ESSID, wireless channel, and relative signal strength of each access point it discovers. 
 - If configured properly, NetStumbler can also grab the IP address associated with the target network based on the underlying operating system sending out a DHCP request and receiving a response. 
@@ -66,7 +66,7 @@ Kismet is another sniffer like Wellenreiter. It can identify the presence of wir
 - While Kismet is designed for detailed packet capture and analysis, Wellenreiter is still designed for war driving. 
 - Good to use both tools in one's arsenal 
 
-![b039ff59bc8dec4ede603f704aae27ab.png](../_resources/b039ff59bc8dec4ede603f704aae27ab.png)
+![b039ff59bc8dec4ede603f704aae27ab.png](../../_resources/b039ff59bc8dec4ede603f704aae27ab.png)
 
 ## War Driving Method 3: Forcing De-authentication With ESSID-Jack
 There is a third way to get the SSIDs from WLANs, implemented in a tool called ESSID-Jack, part of the Air-jack toolkit written by Mike Lynn. 
@@ -79,7 +79,7 @@ After being knocked off the WLAN, in step 2, the clients then automatically try 
 
 In Step 3, the attacker sniffs the air for the association frame and collects the ESSID information. In essence, the attacker is injecting traffic into the LAN (the de-authenticate message) to get useful information out of it (the ESSID). 
 
-![7ec847c28efffda76ef84e73deb4d17b.png](../_resources/7ec847c28efffda76ef84e73deb4d17b.png)
+![7ec847c28efffda76ef84e73deb4d17b.png](../../_resources/7ec847c28efffda76ef84e73deb4d17b.png)
 
 
 ## War Driving Defenses
@@ -148,11 +148,11 @@ Attackers scour these sources looking for individual telephone numbers. They the
 ### THC-Scan 2.0 
 THC-Scan is one of the most full-featured, free war-dialing tools in widespread use. 
 
-![f3469fa35dbb54542e8e8347e7f43b60.png](../_resources/f3469fa35dbb54542e8e8347e7f43b60.png)
+![f3469fa35dbb54542e8e8347e7f43b60.png](../../_resources/f3469fa35dbb54542e8e8347e7f43b60.png)
 
 On the THC-Scan screen, the modem window on the left shows the commands sent from THC-Scan to the system modem, in Hayes-compatible modem lingo with its familiar ATDT syntax. The log window shows what types of lines are discovered, the time time of discovery, and other important messages from the system. 
-![818c5a36ee2d9b278cc6fec1eb1140d2.png](../_resources/818c5a36ee2d9b278cc6fec1eb1140d2.png)
-![f3ca6859894336b9948dce1896a53756.png](../_resources/f3ca6859894336b9948dce1896a53756.png)
+![818c5a36ee2d9b278cc6fec1eb1140d2.png](../../_resources/818c5a36ee2d9b278cc6fec1eb1140d2.png)
+![f3ca6859894336b9948dce1896a53756.png](../../_resources/f3ca6859894336b9948dce1896a53756.png)
 
 When THC-Scan is running, it can rely on the local modem on the war-dialing machine to determine whether the dialed line has a modem, is busy, or times out because a pesky human answered the phone. 
 
@@ -226,7 +226,7 @@ So how does the TTL field work? When a router receives any incoming IP packet, i
 - The TTL field was created so that packets would have a finite lifetime, and we wouldn't have phantom packets caught in routing loops, circling the Internet for eternity. 
 
 We can use this TTL feature to determine the paths that packets take across a network. By sending a series of packets with various low TTL values and waiting for the Time Exceeded responses, we can trace all routers from a given source to any destination. That's what tracerouting is all about. As shown below, we'll send a packet from a source machine with a TTL of one. 
-![a143cb68fba82e59f96e741b2a4d4ec2.png](../_resources/a143cb68fba82e59f96e741b2a4d4ec2.png)
+![a143cb68fba82e59f96e741b2a4d4ec2.png](../../_resources/a143cb68fba82e59f96e741b2a4d4ec2.png)
 
 The first router receives the packet, decrements the TTL to zero, and sends back an ICMP Time Exceeded message. The source address of the ICMP Time Exceeded message is the IP address of the first router on the path to our destination. 
 
@@ -240,11 +240,11 @@ To automate this process, most Unix varieties include a version of the tracerout
 
 The figure below shows the output from the Windows tracert command. Note that each line of the 11 hops between my machine and the destination are shown on the right side of the screen. 
 
-![e69804bcde4108a29c90e56f9317935f.png](../_resources/e69804bcde4108a29c90e56f9317935f.png)
+![e69804bcde4108a29c90e56f9317935f.png](../../_resources/e69804bcde4108a29c90e56f9317935f.png)
 
 Attackers use traceroute to determine the path to each host discovered during the ping sweep. By overlaying results form tracerouting to each target and reconciling the various routers and gateways, an attacker can re-create the target network topology. 
 - Using this information the attacker can create a network diagram like the figure below.
-![d7d37bfeba49fd71fa79bbb18da9c798.png](../_resources/d7d37bfeba49fd71fa79bbb18da9c798.png)
+![d7d37bfeba49fd71fa79bbb18da9c798.png](../../_resources/d7d37bfeba49fd71fa79bbb18da9c798.png)
 
 ## Defenses Against Network Mapping 
 You need to filter out the underlying messages that these tools rely on by using firewalls and the packet filtering capabilities of your routers. 
@@ -270,15 +270,15 @@ Nmap, the most popular port-scanning tool in the world, was created and is maint
 - Nmap runs on most distributions of Unix/Linux, and Windows 
 
 Most users activate Nmap and use it from the command line. However, a very capable GUI front end has been created, called the Nmap front end (Nmapfe)
-![131e420a5b2d87658990802502dc8ebe.png](../_resources/131e420a5b2d87658990802502dc8ebe.png)
+![131e420a5b2d87658990802502dc8ebe.png](../../_resources/131e420a5b2d87658990802502dc8ebe.png)
 
 When scanning for open ports, the scanning system sends packets to the target to interact with each port. What type of packets does the scanning system send and how does the interaction occur? 
 - The types of packets and the modes of interaction depend on the type of scan being conducted.
 - The numerous types of scanning supported by Nmap are summarized below.
-![6338b364eab42bd9bffbabe71199109d.png](../_resources/6338b364eab42bd9bffbabe71199109d.png)
-![4590096b2703d43472c010c85ef3da9f.png](../_resources/4590096b2703d43472c010c85ef3da9f.png)
-![c9de4a9e2502f41da0ba294878dc3c1a.png](../_resources/c9de4a9e2502f41da0ba294878dc3c1a.png)
-![071489e0859c138b97116a3e33a8bdbb.png](../_resources/071489e0859c138b97116a3e33a8bdbb.png)
+![6338b364eab42bd9bffbabe71199109d.png](../../_resources/6338b364eab42bd9bffbabe71199109d.png)
+![4590096b2703d43472c010c85ef3da9f.png](../../_resources/4590096b2703d43472c010c85ef3da9f.png)
+![c9de4a9e2502f41da0ba294878dc3c1a.png](../../_resources/c9de4a9e2502f41da0ba294878dc3c1a.png)
+![071489e0859c138b97116a3e33a8bdbb.png](../../_resources/071489e0859c138b97116a3e33a8bdbb.png)
 
 ## Types of Nmap Scans
 All legitimate TCP connections are established using a three-way handshake 
@@ -291,7 +291,7 @@ On receiving this SYN-ACK packet, the initiator finishes the three-way handshake
 
 At this point the three-way handshake is complete. Sequence numbers will continue to increase with each packet sent. 
 
-![9337290ab0107ee0d2f85e15011fdee7.png](../_resources/9337290ab0107ee0d2f85e15011fdee7.png)
+![9337290ab0107ee0d2f85e15011fdee7.png](../../_resources/9337290ab0107ee0d2f85e15011fdee7.png)
 
 Given this understanding of TCP, we next analyze some of the scan types supported by Nmap. 
 
@@ -360,7 +360,7 @@ The resolution implemented in many traditional (nonstateful) packet filters invo
 - All responses to internally initiated traffic, which we ant to allow, will have the ACK bit set. This way no sessions can be initiated from the external network, because they would have a SYN control bit. 
 - The middle shows these incoming ACK packets. These packets with the ACK bit set are often referred to as established connection, because they are responses to connections already established using packets from the inside. 
 
-![ff3ac3ba3eeb8416087c1fa0be7e1011.png](../_resources/ff3ac3ba3eeb8416087c1fa0be7e1011.png)
+![ff3ac3ba3eeb8416087c1fa0be7e1011.png](../../_resources/ff3ac3ba3eeb8416087c1fa0be7e1011.png)
 
 So we have not solved the problem of allowing incoming responses to our outgoing sessions. An attacker could still send packets with the ACK control bit set and bypass the packet filtering. 
 
@@ -369,7 +369,7 @@ The figure below shows how an attacker can conduct an ACK scan to determine whic
 - If a RESET comes back from the target machine, we know that our packet got through the packet-filtering device, and there appears to be a system at the given address that needs to be scanned.
 - When this happens, Nmap classifies the target port as unfiltered in its output, because the packet-filtering device allows established connections to that target port on the internal network. 
 - If no response or an ICMP Port Unreachable message is returned, Nmap labels the target port as filtered, meaning that it appears something is obstructing the response, likely a packet filter. 
-![fb84f97bcce1240c515e129bb6fe72a5.png](../_resources/fb84f97bcce1240c515e129bb6fe72a5.png)
+![fb84f97bcce1240c515e129bb6fe72a5.png](../../_resources/fb84f97bcce1240c515e129bb6fe72a5.png)
 
 Unfortunately, different operating systems respond in different manners to ACK packets sent to open or closed ports. Some operating systems send a RESET if the port is open, whereas others send it if the port is closed. Thus, ACK scanning is not useful in determining if a port is open or closed; it is useful in measuring filtering capabilities of simple routers and firewalls, as well as determining which addresses are in use. 
 
@@ -383,7 +383,7 @@ To obscure their location, attackers sometimes use Nmap's FTP Proxy Bounce scan 
 - This feature may be severely outdated
 
 Using this feature, an attacker can bounce an Nmap TCP scan off of an innoncent FTP server to help obscure the source of the attack. As shown in the figure below. 
-![1879dce46d1664ab4c12e0795f0b1738.png](../_resources/1879dce46d1664ab4c12e0795f0b1738.png)
+![1879dce46d1664ab4c12e0795f0b1738.png](../../_resources/1879dce46d1664ab4c12e0795f0b1738.png)
 
 Nmap opens an FTP control connection to the FTP server configured to support the file-forward feature. Then, the attacker's tool requests that the innocent FTP server forward a file to a given port on the target's system. 
 
@@ -417,13 +417,13 @@ These two characteristics related in that, if the blamed machine weren't idle, i
 - The IP ID field wouldn't then be very predictable because it would keep changing for each packet that the blamed system spews out.
 
 Consider the figure below which shows how the attacker gets ready to launch an idle scan.
-![dcb3da436ab5b0f8164ddeda523d9f82.png](../_resources/dcb3da436ab5b0f8164ddeda523d9f82.png)
+![dcb3da436ab5b0f8164ddeda523d9f82.png](../../_resources/dcb3da436ab5b0f8164ddeda523d9f82.png)
 
 In Step 1, the attacker sends a SYN packet to the blamed machine. The attacker responds with a SYN-ACK in step 2. This response includes an IP header, with an IP ID field we'll call X . In Step 3, the attacker remembers X. The bad guy might run through steps 1 through 3 a dozen or more times, just to make sure X changes in a predictable fashion. 
 
 Now, on the scan, shown in the figure below, in Step 4, the attacker selects a port that is going to be tested on the target machine. The attacker sends a SYN packet to the target's destination port. The attacker spoofs the source IP address in this SYN packet so that it appears to be coming from the blamed machine. 
 
-![a8fda10bf4224e897d8ce789261df5f4.png](../_resources/a8fda10bf4224e897d8ce789261df5f4.png)
+![a8fda10bf4224e897d8ce789261df5f4.png](../../_resources/a8fda10bf4224e897d8ce789261df5f4.png)
 If the target port is listening in step 5, the target sends a SYN-ACK response back to the apparent source address of the SYN packet. That is, the target sends a SYN-ACK to the blamed machine if the port is listening. When the blamed machine receives a SYN-ACK out of the blue, it won't understand why the target sent a response for a never-initiated connection.
 
 In Step 6, the blamed machine therefore responds with a RESET. Because it is a RESET packet, the IP ID field on the machine that gets blamed will be incremented, to X+1, if the port is listening. 
@@ -462,7 +462,7 @@ Nmap also supports an application-level scanning option focused on RPCs, which a
 - Then the originating program calls an RPC program on another machine, where processing continues.
 - When the remote system ahs finished the procedure, it returns its results and execution flow to the original machine
 
-![0c61729595daeb335edacbdb5e0660cb.png](../_resources/0c61729595daeb335edacbdb5e0660cb.png)
+![0c61729595daeb335edacbdb5e0660cb.png](../../_resources/0c61729595daeb335edacbdb5e0660cb.png)
 
 Familiar RPC services on Unix and Linux environments include:
 - Rpc.rstatd: a service that returns performance stats from the server's kernel
@@ -481,13 +481,13 @@ To improve the chances that the packets generated by the scanner will get throug
 TCP port 80 is a popular choice for a source port during a scan, as the resulting traffic might appear to be coming from a Web server. Attackers also widely use source TCP port 25, which appears to be traffic from an internet mail server using the Simple Mail Transfer Protocol (SMTP). 
 
 Another interesting option involves using a TCP source port of 20, which will look like an FTP data connection. As shown in the figure below, when you FTP a file, you actually create two connections, an FTP control connection and a FTP data connection. 
-![e8d10a1d81e028f288140beae24118c0.png](../_resources/e8d10a1d81e028f288140beae24118c0.png)
+![e8d10a1d81e028f288140beae24118c0.png](../../_resources/e8d10a1d81e028f288140beae24118c0.png)
 
 The FTP control connection is opened from client to server, and carries commands to the server, such as logging in, requesting a file list, and so on. After receiving a request for a file, the FTP server opens a connection back to the FTP client. That's what makes standard FTP somewhat harder for simple routers and firewalls to handle--the FTP data connection starts from the server and comes back to the client. 
 
 Some attacks try to take advantage of networks that allow standard inbound FTP data connections by conducting a port scan using a TCP source port of 20. As shown in the figure below. 
 
-![7f32e986549eb5d7662cc8b65f88bdb7.png](../_resources/7f32e986549eb5d7662cc8b65f88bdb7.png)
+![7f32e986549eb5d7662cc8b65f88bdb7.png](../../_resources/7f32e986549eb5d7662cc8b65f88bdb7.png)
 
 Same can be done with UDP port 53, since it can often appear to be DNS
 
@@ -508,7 +508,7 @@ An attacker may want to determine which underlying operating system the target m
 To determine the operating system type, Nmap uses a technique called active operating system fingerprinting. 
 
 Because RFCs are more used to explain how something does work, there is a lack of a coherent standard in regards to TCP stack responses. For example, a Windows TCP stack responds differently from a Linux machine to illegal control bit sequences. Nmap uses this inconsistency to determine the operating system type of the target machine by sending out a series of packets to various ports on the target including the following:
-![a1f781f54745abb886dc6b04944c39b7.png](../_resources/a1f781f54745abb886dc6b04944c39b7.png)
+![a1f781f54745abb886dc6b04944c39b7.png](../../_resources/a1f781f54745abb886dc6b04944c39b7.png)
 
 This overall process of sending traffic to measure the operating system type is called active operating system fingerprinting because the attacker interacts with the target, sending packets to make the operating system measurement. 
 
@@ -556,7 +556,7 @@ On Linux you can use the ```-p``` flag on netstat so ```netstat -nap``` to view 
 - Run the ```lsof``` command using the ```-i``` flag to list all TCP and UDP ports in use. 
 - Then using the PID of the process I can review it in more detail using ```lsof -p [pid]``` as shown in the figure below.
 - BASED ON CURRENT LINUX, THIS MAY NO LONGER WORK
-![08fa663a08d8f17d64bfbe4b91e42f82.png](../_resources/08fa663a08d8f17d64bfbe4b91e42f82.png)
+![08fa663a08d8f17d64bfbe4b91e42f82.png](../../_resources/08fa663a08d8f17d64bfbe4b91e42f82.png)
 
 To stop a process on Linux or UNIX, you can use the kill [pid] command. The procedure for disabling a service listening on a port permanently depends on whether the service is invoked by ```inetd, xinetd```, or one of the service initialization scripts. 
 
@@ -595,6 +595,242 @@ Additional port-scanning techniques give an attacker even more information about
 - Knowing which ports are open through your firewall is incredibly useful information for an attacker.
 
 There is a crucial difference between Nmap and Firewalk. 
-- Remember Nmap is used to send packets to an end system to determine which ports are listneing on that given target machine. 
+- Remember Nmap is used to send packets to an end system to determine which ports are listening on that given target machine. 
+- If you Nmap a firewall itself, it will show you the ports listening for packets sent to the firewall itself, not what the firewall is allowing through
+- Firewalk is used to send packets through a packet filter device (firewall or router) to determine which ports are open through it.
+- **Nmap cannot differentiate between what is open on an end machine and what is being firewalled**
+- Firewalk on the other hand, can determine if a given port is allowed through a packet-filtering device.
+- **Firewalk allows an attacker to determine your firewall rule set**
+
+As we have seen, Nmap's ACK scanning capability allows an attacker to determine a packet-filtering firewall's rule set regarding which ports allow established connections. That is, the firewall will allow responses back into the internal network if they are destined for these given ports. 
+
+Firewalk goes much further than ACK scanning. 
+- Firewalk allows an attacker to determine which ports are allowed through a firewall for opening new connections, not just sending data along established connections with the ACK bit set. 
+
+Attackers use the information provided by Firewalk to probe target DMZs and internal systems through the proper ports. 
+- For example: If you allow TCP port 2391 through your firewall, but nothing is listening on your DMZ on TCP port 2391, you might feel safe, but the just because the firewall will let these packets in, there is nothing on the protected side of the systems to answer these requests. 
+- Using Firewalk, an attacker can discover the open port through your firewall, even though nothing on your DMZ has that port open. 
+
+### How Firewalk Works
+Similar to the traceroute tool discussed earlier in this chapter, Firewalk utilizes the TTL field of the IP header. 
+- Because TTL is part of the IP header, an attacker can use Firewalk to determine which ports are filtered for either UDP or TC, both of which ride on top of IP. 
+
+Firewalk requires the attacker to enter two IP addresses to start its scan. The first address belongs to the network hop before filtering takes place, typically the external address of the packet-filtering device itself, which might be your firewall or border router. The second IP address is associated with a destination machine on the other side of the packet-filtering device. 
+- Based on this input, Firewalk gathers its data by conducting two phases: network discovery and scanning.
+
+During the network discovery phase, shown below, Firewalk sends a series of packets with incrementing TTLs to determine how many network hops exist between the tool and the firewall. 
+1. First a packet with a TTL of 1 is sent
+2. Then a packet with a TTL of 2 and so on, incrementing the TTLs until the packet-filtering device is reached. 
+
+This is essentially traceroute except the output is a simple count of the number of hops betweeen the attacker and the filtering function not a list of routers between source and destination. 
+![e5185648a35a2cf4f18a486b3c42a454.png](../../_resources/e5185648a35a2cf4f18a486b3c42a454.png)
+
+We then proceed to the scannning phase
+
+For the scanning phase shown below, Firewalk creates a series of packets with a TTL set to one greater than the hop count to the filtering device. 
+- The destination address of the packets in this phase is the protected server on the other side of the packet-filtering device. 
+- This type of scan even works if the filtering device is configured for one-to-one Network Address Translation (NAT) to hide the protected server. 
+- Such a filter merely changes the IP address of packets that traverse it from some externally viewable address to the protected inside address and vice versa. 
+- In such instances, the attacker just inserts a target address of the outside viewable address of the protected server behind the one-to-one NAT. 
+
+![846137ec15376f186d39f3ba2070edb1.png](../../_resources/846137ec15376f186d39f3ba2070edb1.png)
+
+When doing the scan of the target address with a TTL of one greater than the hop count to the filter, these packets will get to the filtering device, and potentially one hop beyond it.
+- If a packet gets through the filter, an ICMP Time Exceeded message will be sent by the system immediately on the other side of the filter (possibly a router). Or, the protected server itself might receive the packet, if it is the next hop, and resopnd with an ICMP Port Unreachable or even a SYN-ACK response. 
+- **If any response comes back, regardless of the type, Firewalk knows that the port is open through the firewall, because the packet lived through enough hops to make it through the firewall to trigger that response.**
+- Note: To determine outbound rules, the attacker would have to conquer a target on the protected network, and Firewalk outward.
+
+### Firewalk Focuses on Packet Filters, Not Proxies
+For Firewalk to work properly, the packet-filtering device must transmit packets without clobbering the TTL field. 
+- Firewalk works against both traditional and stateful packet filters, which both just decrement the TTL by one.
+- It does not however work against proxy firewalls, because proxies do not forward packets, they instead absorb packets on one side of the gateway and creates a new connection on the other side, destroying all TTL information in the process. 
+
+### Layered Filtering
+Additionally, many networks today apply a series of filters on their inbound traffic, perhaps a router with access control lists (ACLs) up front, followed by a packet-filtering firewall or two before reaching a DMZ. 
+- The attacker can Firewalk through such networks as well, configuring the tool to look for the filtering rules for each hop near the end of the network, one by one. 
+- Now, with Firewalk, the attacker will be able to see the exact inbound filter on the first layer the attacker has access to (such as the outmot border router).
+- Then for the second layer (behind the first), the attacker will only be able to see those ports allowed through the first layer AND second layer.
+- This process is rather like looking through a series of screened doors to see if openings line up all the way through. 
+
+### Putting Firewalk Output to Use
+So how can an attacker use a list of the ports allowed through a firewall? 
+- If attackers place nasty software on a internal system listening for connections from the outside world, they'll need to know which ports are open so they can communicate with their nasty internal programs. 
+- The output from Firewalk tells the attacker the ports that are allowed into the target network. 
+
+Furthermore, having discovered the open ports allowed through your firewall, an attacker can easily set up a script to check if any DMZ systems suddenly have new services enabled on those ports. 
+
+### Firewalk Defenses
+There are several options in defending against Firewalk-type attacks.
+1. First, accept that such attacks are possible and harden your firewall
+2. Replace your packet-filtering devices with proxy-based firewalls. 
+	1. Because proxies do not transmit TTL information, an attacker cannot Firewalk through a proxy
+
+
+# Vulnerability-Scanning Tools
+The table below summarizes what the attacker has learned about the target using the IP-based tools discussed in this chapter.
+
+Clearly the attacker's scanning has proven fruitful--they have a lot of useful information about the target. But they still don't know about how to get into the target systems. The next class of tools provides that information: a list of vulnerabilities on the target system that an attacker can exploit to gain access.
+![e0cc5b3258409be832d2a198f45f0dee.png](../../_resources/e0cc5b3258409be832d2a198f45f0dee.png)
+
+Vulnerability scanners are based on a simple idea: **automating the process of connecting to a target system and checking to see if vulnerabilities are present.**
+- By automating the process, we can quickly and easily check the target systems for many hundreds of vulnerabilites.
+- Most vulnerability-scanning tools automatically check the network for the following types of vulnerabilities on target systems:
+	1. *Common Configuration Errors*: Numerous systems have poor configuration settings, leaving various openings for an attacker to gain access
+	2. *Default Configuration Weaknesses*: Out of the box, many systems have very weak security settings, sometimes including default account and passwords
+	3. *Well-known system vulnerabilities*: Every day, volumes of new security holes are discovered and published in a variety of locations on the Internet. Vendors try to keep up with the onslaught of newly discovered vulnerabilites by creating security patches. 
+
+Although particular implementations vary, most vulnerability-scanning tools can be broken down to the following common set of elements: illustrated below
+![b03191bc09bc6532e60e4196a77ca455.png](../../_resources/b03191bc09bc6532e60e4196a77ca455.png)
+- *Vulnerability Database*: This element is the brain of the vulnerability scanner. It contains a list of vulnerabilities for a variety of systems and describes how those vulnerabilities should be checked.
+- *User Configuration tool*: By interacting with this component of the vulnerability scanner, the user selects the target systems and identifies which vulnerability checks to run.
+- *Scanning Engine*: This element is the arms and legs of the vulnerability scanner. Based on the vulnerability database and user configuration, this tool formulates packets and sends them to the target to determine whether vulnerabilites are present. 
+- *Knowledge base of current active scan*: This element acts like the short-term memory of the tool, keeping track of the current scan, remembering the discovered vulnerabilities, and feeding data to the scanning engine.
+- *Results repository and report generation tool*: This element generates pretty reports for its user, explaining which vulnerabilties were discovered on which targets and possibly recommending remedial actions for dealing with the discovered flaws. 
+
+## A Whole Bunch of Vulnerability Scanners
+A large number of very effective commerical vulnerability scanners are available today (in 2005), including the following:
+- Harris STAT Scanner (www.stat.harris.com)
+- ISS's Internet Scanner (www.iss.net)
+- GFI LANguard Network Security Scanner (Www.gfi.com/lannetscan)
+- E-eye's Retina Scanner (www.eeye.com)
+- Qualys'QualysGuard, a sub-based scanning service that scans their cusotmers' systems across the Internet on a regular basis
+- McAfee's Foundstone Foundscan, another sub-based scanning service
+
+Nessus is free and still reliable, another high-quality free, open source scanner similar to Nessus is the Attacker Tool Kit (ATK)
+
+
+## Nessus: The Most Popular Free Vulnerability Scanner Available Today
+The Nessus vulnerability scanner was created by the Nessus Development Team. Its advantages include the following: 
+- The freedom to write your own vulnerability checks and incorporate them into the tool.
+- The knowledge that a large group of developers is invovled around the world creating new vulnerability checks
+- The price is right. It's free!
+
+### Nessus Plug-Ins
+Nessus includes a variety of vulnerabilty checks, implemented in a modular architecture. Each vulnerablity check is based on a small program called a plug-in. One plug-in conducts one check of each target system. Together, these plug-ins comprise the Nessus vulnerability database. Nessus sports more than 1,000 distinct plug-ins that check for a variety of vulnerabilities. Plug-ins are divided into the following categories:
+- *Backdoors*: These checks look for signs of remote control and backdoor tools installed on the target system, including Virtual Network Computing (VNC) and some of the more common bots.
+- *CGI abuses*: These checks look for vulnerable CGI scripts, and related Web Technologies, including Active Server Pages (ASPs), Java Server Pages (JSPs), Cold Fusion scripts, and more. These various types of scripts are run on Web servers, and are used to implement web applications. 
+- *Cisco*: This category of plug-ins looks for various flawed versions and common misconfigurations in Cisco products, especially the Internetwork Operating System (IOS) router software and VPN concentrator products.
+- *Default Unix Accounts*: This set looks for various common UNIX accounts with easily guessed passwords, including "guest" and "demos".
+- *DoS*: These attacks look for vulnerable services that can be crashed across the network. Many of these tests will actually cuase the target system to crash, but some merely check version numbers of the services.
+- *Finger abuses*: These checks all center around the Finger service that was historically used on UNIX machines to get a list of current users. 
+- *Firewalls*: These checks look for misconfigured firewall systems
+- *FTP*: This category includes a very large number of checks for misconfigured and unpatched FTP servers.
+- *Gain a shell remotely*: This category of plug-ins looks for vulnerabilities that allow an attacker to gain command-line access to the target systems.
+- *Gain root remotely*: These plug-ins look for the holy grail of vulnerabilities, the ability to have super-user access on the target system across the network. 
+- *General*: This catch-all category includes a variety of checks, such as gathering the server type and version number for Web servers, FTP servers, and mail servers.
+- *Miscellaneous*: This is another catch-all category of plug-ins, including tracerouting and system fingerprinting.
+- *Netware*: This small number of plug-ins looks for flaws in Novell Netware servers.
+- *NIS*: These checks look for vulnerabilities in the Network Information Service (NIS) used by UNIX machines to share account information and other system data.
+- *Peer-to-peer file sharing*: These plug-ins look for the presence of various file-sharing applications, such as KaZaA and Gnutella, as well as common misconfigurations in these tools.
+- *Remote File Access*: These checks look for vulnerabilities in file sharing, including the Network FIle System (NFS) and Trivial File Transfer Protocol (TFTP)
+- *RPC*: These plug-ins scan for vulnerable RPC programs, rather like the Nmap RPC scanning capability we discussed earlier in this chapter.
+- *SMTP problems*: These plug-ins look for vulnerable mail servers
+- *SNMP*: Looks for vulnerable systems managed via the Simple Network Management Protocol (SNMP) and attempts to extract sensitive configuration information using it.
+- *Windows*: This category focuses on attacks against Windows systems, ranging from Windows 9x to Windows 2003 and later.
+- *Useless Services*: These checks determine whether the target is running any services that have doubtful functional value, including the daytime and cargen services.
+
+Nessus also includes Nmap as a built-in port-scanning tool, increasing its usefulness tremendously.
+
+### The Nessus Architecture
+Nessus is based on a classic client-server architecture, where the client hosts a user configuration tools, results repository, and report generation tool. The Nessus server includes a vulnerability database (the set of plug-ins), a knowledge base of the current active scan, and scanning engine. The Nessus client-server architecture is shown below. 
+![4a6118df9baaa778fa257474a7b6ec08.png](../../_resources/4a6118df9baaa778fa257474a7b6ec08.png)
+
+### Configuring Nessus for a Scan
+Nessus includes an easy-to-use GUI that allows for the configuration of the tool, via the GUI, a user can configure the following:
+- Which plug-ins to run
+- Target systems (network ranges or individual systems)
+- Port range and types of port scanning (all Nmap scan types are supported)
+- The port for Nessus client-server communication
+- Encryption algorithms for client-to-server communication
+- E-mail address for sending the report
+
+### Write Your Own Attack Scripts
+One of the best features of Nessus is the ability to write your own plug-ins, a capability not supported in many major commerical scanners. 
+- Users can write their own plug-ins in the C language or a custom Nessus Attack-Scripting Language (NASL).
+
+### Reporting the Results
+Nessus includes a reporting tool that allows for viewing and printing results, as shown in the figure below. 
+- Reports can be exported to a file in a variety of formats, including Hypertext Markup Language (HTML), LaTeX, ASCII,and XML, a really nice feature. 
+
+![fb8dbc63a7b329509a87ad996ae0d204.png](../../_resources/fb8dbc63a7b329509a87ad996ae0d204.png)
+
+### So, What Does an Attacker Do With These Results?
+At this point of the scan, the attacker now has a list of vulnerabilities on the target systems discovered by the vulnerability-scanning tool. Most attackers take this list and search for particular exploits based on them.
+
+## Vulnerability Scanning Defenses
+### Close Unused Ports and Keep your Systems Patched 
+A recurring theme throughout this chapter, and indeed the whole book, is that you must close all unused ports and apply patches to your systems. 
+
+### Run the Tools Against Your Own Networks
+You should run a basic vulnerability-scanning tool against your own network on a periodic basis to identify vulnerabilites before an attacker does. 
+
+### Be Careful with Denial of Service and Password Guessing Tests!
+When you run vulnerability scanners against your own network, make sure you understand what you're doing! 
+- Some plug-ins are dangerous and could impair or even crash the target machine. 
+- Be careful with password guessing tools because if the scanner tried a number of invalid attempts, the actual user may not be able to authenticate
+
+## Be Aware of Limitations of Vulnerability-Scanning Tools
+Vulnerability-scanning tools are extremely useful because they automate security checks across a large number of systems over the network. 
+- A major limitation is that these tools only check for vulnerabilities that they know about
+- Keep the vulnerabilities database up to data. 
+- Another major limitation of vulnerabilitity-scanning tools invovles the fact that they look for vulnerabilities on the target addresses that you configure and don't really understand the network architecture. 
+- Vulnerability-scanning tools only give their user a snapshot in time of the system security. 
+
+# Intrusion Detection System and Intrusion Prevention System Evasion
+Thus far in the attack, the bad guys have had great success in gathering sensitive information about the security secrets of the target computing infrastructure. 
+- A lot of what was discussed thus far in this chapter is incredibly noisy. 
+
+## How Network-Based IDS and IPS Tools Work
+Network-based IDS and IPS tools gather packets associated with normal use of the network and attacks alike. 
+- The network-based IDS and IPS must sort through this mountain of data to determine if an actual attack is underway.
+- Today, many network-based IDS and IPSs have a database of attack signatures that they try to match against network traffic. 
+- We are seeing more behavior-based IDS and IPS tools, which look for attacker activity based on what the attacker does (such as stealing important data or configuration files)
+
+![dad1a8968de6d9f57eb94cdb80394e4c.png](../../_resources/dad1a8968de6d9f57eb94cdb80394e4c.png)
+
+The figure above shows a typical network-based IDS installation, where we have a network based IDS probe looking for signs of an attack. 
+- This probe includes a signature that tries to detect the theft of a password file from a UNIX system, by searching the arriving network traffic for the string ```"cat/etc/shadow"```, the common location of encrypted passwords on a UNIX machine.
+
+## How Attackers Can Evade Network-Based IDSs and IPSs
+The attackers want to fly under the radar screen of the IDS and IPS. How can this very important goal be accomplished? Attackers will take advantage of the interaction of the following related factors to avoid detection:
+- *Mess with the appearance of traffic so it doesn't match the signature*: This mostly means altering the packet structure or syntax in a way that the IDS or IPS does not anticipate.
+- *Mess with the Context*: Network-based IDS and IPS tools do not have complete context of how the packets they are capturing will be interpreted by the end system. They are peering in on someone else's conversation, and don't really know what the end system will do with the packets they are monitoring. 
+
+## IDS and IPS Evasion at the Network Level
+As discussed in Chapter 2, large IP packets must be broken down into fragments. IDS and IPS systems must store fragments in a buffer until the entire packet can be loaded in. 
+- Virtual Fragment reassembly buffers are typically loaded into RAM and populated with fragments as they arrive. Thus, gathering and analyzing fragments requires a great deal of memory and processing power on the IDS and IPS part. 
+- Furthermore, to analyze the communication reflected in the fragments, the IDS or IPS must reassemble all of these packets in the same way that the target system performs reassembly. 
+
+### The Tiny Fragment Attack and the Fragment Overlap Attack
+The tiny fragment attack is designed to fool the IDS and IPS by creating two fragments, neither of which includes enough infromation to trp the signature on the IDS or IPS.
+- The packet is sliced in the middle of some data that would otherwise trigger the IDS or IPS.
+- As we discussed before, suppose the signature is looking for the ``` cat /etc/shadow``` 
+- Because the IDS or IPS is looking for this string to make alerting or blocking decisions, it might ignore the tiny initial fragment as it passes. 
+- After all, the first fragment doesn't match the signature, and the second packet independently doesn't match a signature either
+![4a5cd78a4a3da86868d57889509589f1.png](../../_resources/4a5cd78a4a3da86868d57889509589f1.png)
+
+A far more insiduous fragmentation example is the fragment overlap attack, which is based on manipulating the fragment-offset field of the IP header.
+- The fragment-offset fieldtells the destination system where the given fragment fits in the overall bigger packet that was sliced apart into fragments. 
+- For this scenario, the attacker creates two (or more) fragments for each IP packet. 
+- One fragment has the TCP header, and a piece of innocuous-looking data tath doesn't trigger the signature like ```cat /etc/fred```
+- The second fragment has an offset value that is a lie, the offset is too small, so that when the fragments are reassembled, they overlap and "shadow" overwrites fred. 
+- When the two fragments are reassembled at the targeted protected server, they reassemble into the evil packet. TCP/IP stack passes the packet to the application, which receives ```cat /etc/shadow``` The attacker has evaded the IDS or IPS
+![b1822669a0604c40cff3390060f80ff9.png](../../_resources/b1822669a0604c40cff3390060f80ff9.png)
+
+In a sense, the IDS and IPS don't know how the end system is going to reassemle the packet, so they can't be sure what impact these unusually overlapped fragments will have there. 
+
+### FragRouter: A Nifty Tool for Conducting Fragmentation Attacks to Evade IDS and IPS Tools
+FragRouter implements a variety of fragmentation attacks.
+- FragRouter runs on BSD, Linux, and Solaris. 
+- It supports more than 35 different ways of slicing and dicing packets to maniuplate the flow of data between a source and destination, including the options shown in the table below.
+
+![cab483f3e852d8671591e5b67de44baa.png](../../_resources/cab483f3e852d8671591e5b67de44baa.png)
+![d8e1e9fb4e13f40027ae77a04812e832.png](../../_resources/d8e1e9fb4e13f40027ae77a04812e832.png)
+
+The beauty of FragRouter is that it separates the attack functionality from the fragmentation functionality. As the name implies, it really is a router, implemented in software. As displayed in the figure below, attackers install it on one of their own systems and then use any attack tool to send packets through the machine with FragRouter installed.
+![06e5d6e8ecc2ab39fc8c51818bffbe8f.png](../../_resources/06e5d6e8ecc2ab39fc8c51818bffbe8f.png)
+
+
 
 # Summary
+ 

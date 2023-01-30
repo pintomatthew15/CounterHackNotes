@@ -32,7 +32,7 @@ Once they are connected to a share, users can access objects (eg, files, directo
 # The Underlying Windows Operating System Architecture
 The following figure, provides a high-level depiction of the architecture of operating systems based on the original Windows NT core (XP, 2000, 2003). Windows is designed as a series of layers, with each higher layer communicating only with the layers above and below it. **THIS IS HEAVILY OUTDATED**
 
-![0c3ce3b52fca4492d3c8e8da50511e42.png](../_resources/0c3ce3b52fca4492d3c8e8da50511e42.png)
+![0c3ce3b52fca4492d3c8e8da50511e42.png](../../_resources/0c3ce3b52fca4492d3c8e8da50511e42.png)
 
 # User Mode
 Portions of the OS that provide support for user interaction. 
@@ -63,7 +63,7 @@ Security-related functions are handled by the Security subsystem, also known as 
 - SAM files has two passwords due to backwards compatibility reasons (NT hash and LM representation)
 
 Each line of the SAM database consists of a set of entries: the account name, a unique number identifying each user known as the relative ID, the LM password representation and the NT hash, and several other optional fields.
-![8bddf2af1435302e9bd89b9af5695d0a.png](../_resources/8bddf2af1435302e9bd89b9af5695d0a.png)
+![8bddf2af1435302e9bd89b9af5695d0a.png](../../_resources/8bddf2af1435302e9bd89b9af5695d0a.png)
 
 # How Windows Password Representations Are Derived
 The LM and NT password representations for each account in Windows are derived in two fundamentally different ways.
@@ -148,7 +148,7 @@ In most Windows deployments, groups are used to control access and privileges, n
 A number of default groups are created when the first domain controller is installed. 
 - Most group names are self explanatory except for the replicator group which controls the Windows replicator function used in fault-tolerant installations, and the Power Users group, which can perform any task except those reserved for Administrators. 
 
-![4f5b6e069dfa1a90472ee86fad4393c9.png](../_resources/4f5b6e069dfa1a90472ee86fad4393c9.png)
+![4f5b6e069dfa1a90472ee86fad4393c9.png](../../_resources/4f5b6e069dfa1a90472ee86fad4393c9.png)
 Beyond these default groups there are also special groups intended for controlling certain types of system functionality. You cannot add or delete users from special groups...thats why they're special. 
 - SYSTEM is the holy grail special group--nothing in Windows has a higher level of privileges than SYSTEM. 
 - However, SYSTEM is not a logon ID; no one can log on to a machine as a part of the SYSTEM group. 
@@ -172,7 +172,7 @@ After admin privileges, power user privileges are the next highest privilege fol
 
 To view these rights, run the security policy management console typing ```secpol.msc```
 
-![4d283f93939af64489ee40916d837acd.png](../_resources/4d283f93939af64489ee40916d837acd.png)
+![4d283f93939af64489ee40916d837acd.png](../../_resources/4d283f93939af64489ee40916d837acd.png)
 
 # Policies
 In Windows, a system admin can implement a variety of policies that affect security. Each policy is a collection of configuration settings that can be applied either to local machines or to the domain as a whole. 
@@ -182,14 +182,14 @@ The most basic type of policy in Windows is the Account Policy, which applies to
 - Account policy parameters include keeping a history of used passwords to prevent reuse, requiring a maximum password age and a minimum password age
 - Account Lockout Policy parameters include lockout duration, lockout thresholds, and control over how accounts are reset after lockout
 
-![268e47ffe63704894509299f5c31d08f.png](../_resources/268e47ffe63704894509299f5c31d08f.png)
-![a4046597e895506aa154ee059cb96b50.png](../_resources/a4046597e895506aa154ee059cb96b50.png)
+![268e47ffe63704894509299f5c31d08f.png](../../_resources/268e47ffe63704894509299f5c31d08f.png)
+![a4046597e895506aa154ee059cb96b50.png](../../_resources/a4046597e895506aa154ee059cb96b50.png)
 
 ## User Properties Settings
 Although User Properties are not properly called "policies" in Windows, they serve virtually the same function for security. 
 - They are similar in principle to account policy settings, except they can be set differently for every user account
 - You can look for user properties by invoking the local user manager Microsoft control typing ```lusrmgr.msc``` in the console
-- ![f74665fdcfda3ddc4c9948f2a88e7126.png](../_resources/f74665fdcfda3ddc4c9948f2a88e7126.png)
+- ![f74665fdcfda3ddc4c9948f2a88e7126.png](../../_resources/f74665fdcfda3ddc4c9948f2a88e7126.png)
 
 # Trust
 Trust in Windows extends the single-domain logon model to other domains, which can be a real convenience for users who need access to resources within those domains. 
@@ -215,7 +215,7 @@ Windows offers three types of logging: System logging, security logging (also so
 
 By default, detailed auditing is disabled under all Windows operating systems. Below are the audit policy settings within the Security Settings Manager
 
-![41c4c5a6c862b95f700065b9fca3ac6d.png](../_resources/41c4c5a6c862b95f700065b9fca3ac6d.png)
+![41c4c5a6c862b95f700065b9fca3ac6d.png](../../_resources/41c4c5a6c862b95f700065b9fca3ac6d.png)
 
 # Object Access Control and Permissions
 A member of built-in mechanisms control access to objects such as files and printers in Windows. Let's look at these control mechanisms in more detail.
@@ -245,8 +245,8 @@ Finally, it is important to limit the kinds of access the EVERYONE group gets.
 Beyond individual object permissions, Windows also allows users to configure the permissions on the various components of the file system that they intend to share with others. 
 - On a shared folder, a user can right-click and select properties to view these details on the sharing tab. Figure below
 
-![6ba3fb726463481436204cf3214a8588.png](../_resources/6ba3fb726463481436204cf3214a8588.png)
-![822bfe9b83bcda1448c4c2cae615cef1.png](../_resources/822bfe9b83bcda1448c4c2cae615cef1.png)
+![6ba3fb726463481436204cf3214a8588.png](../../_resources/6ba3fb726463481436204cf3214a8588.png)
+![822bfe9b83bcda1448c4c2cae615cef1.png](../../_resources/822bfe9b83bcda1448c4c2cae615cef1.png)
 
 # Weak Default Permissions and Hardening Guides
 Even if a partition uses NTFS, many of the Windows default permissions for system directories and files can charitably be described as "faulty". 
@@ -302,7 +302,7 @@ Now a domain in Windows 2000+ isn't so much about network organization as it is 
 - Domains can be deployed in either a tree or forest structure.
 - A tree is a linking of domains via trust in a manner that results in a continuous namespace to support locating resources more easily using Active Directory
 - This means as one starts at the topmost domain name in the tree structure and goes down, the domain name of the domain immediately below starts with the name of the parent domain immediately above, (see below)
-![3c2efdcd285edc7e60f82bfa32bf8a8c.png](../_resources/3c2efdcd285edc7e60f82bfa32bf8a8c.png)
+![3c2efdcd285edc7e60f82bfa32bf8a8c.png](../../_resources/3c2efdcd285edc7e60f82bfa32bf8a8c.png)
 - Alternatively a forest produces a noncontiguous namespace by cross-linking domains via trust. In a forest, there is no structured namespace and consequently, resource location again becomes a difficult proposition. 
 
 ## Active Directory: Putting All Your Eggs in One Huge Basket
@@ -354,7 +354,7 @@ OUs in Windows 2000+ allow hierarchical arrangement of groups of users who can i
 
 OUs constitute a potentially big advantage in Windows 2000+ because they support delegation of privileges. Each OU can be assigned a particular level of privileges. Children OUs below the parent can never be given more rights than the parent has. 
 - This ensures runaway privileges are not a problem within any domain. 
-![09e7193132e361e31d3724755f09699e.png](../_resources/09e7193132e361e31d3724755f09699e.png)
+![09e7193132e361e31d3724755f09699e.png](../../_resources/09e7193132e361e31d3724755f09699e.png)
 - One downside of OUs is that they are not recognized outside the particular domain in which they have been created. 
 
 ## Privilege Control
@@ -364,7 +364,7 @@ Windows 2000+ includes many significant alterations to the way privileges are ha
 Rights in Windows 2000+ include Change System Time, Debug Programs, Log On Locally, Replace a Process Level Token, and many others.
 - They are considerably more granular than in Windows NT
 - There is no distinction between standard and special rights in Windows 2000+, but rather more or less just a big set of rights, some of which are extremely powerful, others of which are not. 
-![511e99d359c046c392c0e02d29dfefb5.png](../_resources/511e99d359c046c392c0e02d29dfefb5.png)
+![511e99d359c046c392c0e02d29dfefb5.png](../../_resources/511e99d359c046c392c0e02d29dfefb5.png)
 
 There are usually multiple ways to set up a rights assignment scheme in Windows 2000+. Suppose someone needs only to create and delete accounts.
 - One way to achieve that would be to include that person's account in the Account Operator group
@@ -376,14 +376,14 @@ RunAs provides the ability to launch processes with a different user context. So
 - The major advantage is to allow privileged users to execute programs in nonprivileged context, thereby helping to control against the dangers of privilege escalation.
 - This capability is therefore roughly analogous to the UNIX sudo applications. 
 
-![672b2e281d785a8af247f6a35b8ba1e6.png](../_resources/672b2e281d785a8af247f6a35b8ba1e6.png)
+![672b2e281d785a8af247f6a35b8ba1e6.png](../../_resources/672b2e281d785a8af247f6a35b8ba1e6.png)
 
 ## Policies
 ### Group Policy Objects
 The major change in Windows 2000+ policies is the introduction of Group Policy Objects (GPOs). GPOs allow different policies to be applied to different users, OUs, computers, or even entire domains. 
 - To look at Group policy settings for a local system, go to console and type ```mmc``` to bring up the Microsoft Management Console screen
 - Then go to console Add/Remove Snap-in and click Add. Choose Group Policy, click Add, and then click Finish when you see the Local Computer GPO.
-![71f63fc95c7f3f6406accc197fcc0a78.png](../_resources/71f63fc95c7f3f6406accc197fcc0a78.png)
+![71f63fc95c7f3f6406accc197fcc0a78.png](../../_resources/71f63fc95c7f3f6406accc197fcc0a78.png)
 
 # Summary
 Microsoft's Windows operating system is very popular as a target for attackers. As of this writing, the most widely deployed version is Windows XP ( :()  )

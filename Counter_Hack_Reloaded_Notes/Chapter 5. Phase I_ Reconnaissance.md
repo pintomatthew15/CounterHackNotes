@@ -28,7 +28,7 @@ The simplest way to spoof caller ID involves using a caller ID spoofing service.
 Many users have discovered that they can use Voice over IP (VoIP) services to make calls and alter their caller ID information. 
 - By reconfiguring their VoIP equipment--especially using highly configurable, free VoIP Private Branch exchanges (PBXs) like Marc Spencer's Asterisk for Linux, OpenBSD, and Mac OS X-users can send any caller ID numbers they choose. 
 - The specific procedure for altering the caller ID number depends on both the VoIP equipment and the VoIP service provider. 
-![113d74d9baf3fdae70ad026bd24a5e1e.png](../_resources/113d74d9baf3fdae70ad026bd24a5e1e.png)
+![113d74d9baf3fdae70ad026bd24a5e1e.png](../../_resources/113d74d9baf3fdae70ad026bd24a5e1e.png)
 
 ### Defenses Against Social Engineering and Caller ID Spoofing Attacks
 User awareness is the best way to defend against social engineering and caller ID spoofing attacks is user awareness. 
@@ -106,10 +106,10 @@ Johnny Long maintains a list of more than 1,000 useful searches to find vulnerab
 
 There are tools that automate Google recon for vulnerabilities. These tools are essentially nifty graphical front ends that query Google using its API and your Google API key to look for evidence of vulnerabilities in a site of your choosing. 
 - Two of the most popular tools in this category are Foundstone's SiteDigger ```www.foundstone.com/resources/proddesc/sitedigger.htm``` and Wikto by Roelof (```www.sensepost.com/research/wikito)``` 
-![771524742cf08b5dda0d3612284804bd.png](../_resources/771524742cf08b5dda0d3612284804bd.png)
+![771524742cf08b5dda0d3612284804bd.png](../../_resources/771524742cf08b5dda0d3612284804bd.png)
 
 Google can be used for looking at flights as well
-![9cfdb4e9f8e2f5c9c5982ad3cf927b9e.png](../_resources/9cfdb4e9f8e2f5c9c5982ad3cf927b9e.png)
+![9cfdb4e9f8e2f5c9c5982ad3cf927b9e.png](../../_resources/9cfdb4e9f8e2f5c9c5982ad3cf927b9e.png)
 
 ## Listening in At The Virtual Water Cooler: Newsgroups 
 Another realm with great promise for an an attacker involves Internet newsgroups so frequently used by employees to share information and ask questions. News-groups often represent sensitive information leakage on a grand scale. Employees submit detailed questions to technical newsgroups about how to configure a particular type of system, get around certain software coding difficulties, or troubleshoot a problem. Attacks love this kind of request because it often reveals sensitive information about the particular vendor products a target organization uses and even the configuration of these systems.
@@ -146,10 +146,10 @@ Registrars for domain names ending with .com, .net, .org, and .edu are commercia
 - Some registrars charge a handsome price and offer a variety of value-added services, whereas others are bare bones, offering free registration in exchange for ad space on your Web Site.
 
 **List of Accredited Registrars on the InterNIC site**
-![3ac15bc95914081af04bbc1cb7ad2ac1.png](../_resources/3ac15bc95914081af04bbc1cb7ad2ac1.png)
+![3ac15bc95914081af04bbc1cb7ad2ac1.png](../../_resources/3ac15bc95914081af04bbc1cb7ad2ac1.png)
 
 
-![5f972d05156edf240929a9a43b60da44.png](../_resources/5f972d05156edf240929a9a43b60da44.png)
+![5f972d05156edf240929a9a43b60da44.png](../../_resources/5f972d05156edf240929a9a43b60da44.png)
 
 ## Researching Domain Names Other Than .Com, .Net, .ORG, .EDU, .AERO, .ARPA,.BIZ, .COOP, .INFO, .INT, and .MUSEUM
 For organizations outside of the US, one of the most useful research tools is the Uwhois Web site. This site includes a front end for registrars in 246 countries, ranging from Ascension Island (.ac) to Zimbabwe (.zw). Uwhois points you to the appropriate registrar for any particular country you need to research. 
@@ -166,12 +166,12 @@ Using the whois database, you can conduct searches based on a variety of differe
 - IP address, by typing the dotted-quad IP address notation, such as 10.1.1.48
 
 **Looking up a domain name at a particular registrar**
-![bf13642dfbc721be5b1058c0df57c93e.png](../_resources/bf13642dfbc721be5b1058c0df57c93e.png)
+![bf13642dfbc721be5b1058c0df57c93e.png](../../_resources/bf13642dfbc721be5b1058c0df57c93e.png)
 
 So if the attacker only knows the name of the target, they can use this whois database to search for more information about the given organization, including registered domain names, name servers, contacts, and so on.
 
 **Results of the WhoIs Database**
-![4eb9f4701663e19226d2a98a52d7f73d.png](../_resources/4eb9f4701663e19226d2a98a52d7f73d.png)
+![4eb9f4701663e19226d2a98a52d7f73d.png](../../_resources/4eb9f4701663e19226d2a98a52d7f73d.png)
 
 ## IP Address Assignments Through ARIN and Related Sites
 An organization called the American Registry for Internet Numbers (ARIN) maintains a Web-accessible whois style database that allows users to gather information about who owns particular IP address ranges, based on company or domain names, for organizations in North America, a portion of the Caribbean, and subequatorial Africa. 
@@ -187,7 +187,7 @@ DNS is an incredibly important component of the Internet and another immensely u
 - DNS servers also referred to as name servers, store this information and make up the hierarchy
 - DNS makes the Internet usable by allowing people to access machines by typing a human-readable name without having to know the IP address. 
 
-![47d1aeb56f936d640ff2a6956e89a5cf.png](../_resources/47d1aeb56f936d640ff2a6956e89a5cf.png)
+![47d1aeb56f936d640ff2a6956e89a5cf.png](../../_resources/47d1aeb56f936d640ff2a6956e89a5cf.png)
 
 At the top of the DNS hierarchy are the root DNS servers, which contain information about the DNS servers in the next level down the hierarchy. Various authorities around the world maintain and run the 13 root DNS servers on the Internet, which act as a starting point for DNS searches. 
 
@@ -197,7 +197,7 @@ Going down the hierarchy another level, we find DNS servers for individual organ
 
 Using a process called resolving, users and programs search the DNS hierarchy for information about given domain names. 
 
-![02f302ee2f72fae06171d61166cb69b5.png](../_resources/02f302ee2f72fae06171d61166cb69b5.png)
+![02f302ee2f72fae06171d61166cb69b5.png](../../_resources/02f302ee2f72fae06171d61166cb69b5.png)
 To begin a DNS search for a name like www.counterhack.net, client software first checks a local configuration file (called the hosts file) as well as a local cache on the client machine to see if it already knows the IP address associated with the domain name. 
 
 If not a client sends a DNS request to its local DNS server asking for the IP address associated with the domain name as shown in the figure above. 
@@ -206,10 +206,10 @@ If the local DNS server has the information cached from a previous DNS search, o
 - The most common type of search done by local DNS servers is recursive search where various servers in the DNS hierarchy are systematically queried to find the desired information. 
 
 On a windows machine you can dump your client's DNS cache by typing the command ```ipconfig /displaydns``` at a command prompt shown in the figure below. 
-![e27a50ab406dec8a895a38ed9fd8b2ad.png](../_resources/e27a50ab406dec8a895a38ed9fd8b2ad.png)
+![e27a50ab406dec8a895a38ed9fd8b2ad.png](../../_resources/e27a50ab406dec8a895a38ed9fd8b2ad.png)
 
 A DNS server just houses a bunch of DNS records like those shown below. For example, the DNS server might have 20 address records for the addresses of mail servers, File Transfer Protocol (FTP) servers, and Web servers, one or two MX records specifying which server will accept mail, and two DNS server records spelling out DNS servers themselves. 
-![9719593c60e4cc7ee2566b23efa25047.png](../_resources/9719593c60e4cc7ee2566b23efa25047.png)
+![9719593c60e4cc7ee2566b23efa25047.png](../../_resources/9719593c60e4cc7ee2566b23efa25047.png)
 
 ## Interrogating DNS Servers
 First, the attacker needs to determine one or more DNS servers for the target organization. This information is readily available in the registration records obtained from the registrar's whois database searches, as discussed in the previous section. 
@@ -240,7 +240,7 @@ To conduct a zone transfer, the nslookup command must be instructed to use the t
  ...
  
 ```
-![5d64d469ed85844c87c4423082a773bb.png](../_resources/5d64d469ed85844c87c4423082a773bb.png)
+![5d64d469ed85844c87c4423082a773bb.png](../../_resources/5d64d469ed85844c87c4423082a773bb.png)
 This zone transfer output is abbreviated for readability. Note that using a zone transfer, we have found some extremely interesting information. The first column of our output tells us a bunch of system names. One of these names (w2k3ftp) appears to indicate the operating system type and purpose of the machine. In the last column, we have the payoff: IP addresses, mail server names, and even operating system types. The text record points out an admin workstation, surely a worthwhile target. 
 
 Unfortunately on most modern Linux machines, the nslookup command has been partially incapacitated so it can no longer perform zone transfers. Therefore to run zone transfers you would need another command such as the ```dig``` command built into most Linux distributions. To make dig do a zone transfer, run the dig command like this:
@@ -260,12 +260,12 @@ Next, you should restrict zone transfers. Zone transfers are usually required to
 Employ a technique called split DNS to limit the amount of DNS information about your infrastructure that is publicly available. The general public on the Internet only needs to resolve names for a small fraction of the systems in your enterprise, such as external Web, mail, and FTP servers. There is no reason to publish on the internet DNS records for all of your sensitive internal systems. 
 - A split DNS allows you to separate the DNS records that you want the public to access from your internal names. 
 - The figure below displays a split DNS infrastructure, the internal DNS is configured to forward requests from internal users for external machines to the external DNS server. The Internal DNS acts rather like a proxy server getting a request from the inside and forwarding it out. 
-![dbce2a61ce39ec454c93f3b2d1457ef3.png](../_resources/dbce2a61ce39ec454c93f3b2d1457ef3.png)
+![dbce2a61ce39ec454c93f3b2d1457ef3.png](../../_resources/dbce2a61ce39ec454c93f3b2d1457ef3.png)
 ## General-Purpose Reconnaissance Tools
 
 ### Sam Spade: A general Purpose Recon Client Tool
 AS OF 2004 NO LONGER IN SERVICE 
-![e8f278175b8d50d835bf14a980e35b74.png](../_resources/e8f278175b8d50d835bf14a980e35b74.png)
+![e8f278175b8d50d835bf14a980e35b74.png](../../_resources/e8f278175b8d50d835bf14a980e35b74.png)
 
 ### Web-Based Reconnaissance Tools: Research and Attack Portals
 Some of the most interesting Web-based reconnaissance and attack tools include the following:
@@ -278,7 +278,7 @@ Some of the most interesting Web-based reconnaissance and attack tools include t
 - www.dslreports.com/scan
 
 David Rhoades has created a web site called AttackPortal.net featuring a searchable database with more than 100 different Web-based recon and attack tools like those listed previously. 
-![7f5290b2902da552e2a6ec4badb9a5f8.png](../_resources/7f5290b2902da552e2a6ec4badb9a5f8.png)
+![7f5290b2902da552e2a6ec4badb9a5f8.png](../../_resources/7f5290b2902da552e2a6ec4badb9a5f8.png)
 
 
 # Summary
