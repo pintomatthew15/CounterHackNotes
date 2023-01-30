@@ -346,10 +346,255 @@ Like FIN, Xmas Tree, and Null scans, an ACK scan also violates the protocol spec
 - By looking at the source and destination IP addresses, source and destination ports, and TCP control bits, a packet filter determines whether it should transmit a packet or drop it. 
 
 In a common architecture, many networks are configured to allow internal network users to access an external network (most often, the Internet). In this scenario, shown below, an external packet-filtering device allows outbound traffic so that the internal machines can access servers on the external network. 
-![ff3ac3ba3eeb8416087c1fa0be7e1011.png](../_resources/ff3ac3ba3eeb8416087c1fa0be7e1011.png)
+
 - This packet filtering device could be a router or firewall supporting traditional packet filtering.  
 - For example, if we want to allow outbound Web access (HTTP), users need to make connections from high-numbered source ports on internal machines to destination TCP port 80 on external systems. 
 - We define a rule allowing such traffic on the packet-filtering device. 
 
 However, when an internal user accesses the external network, we have to handle the response traffic. 
+- We allow outgoing web requests to destination TCP port 80, but how do the Web pages get back in?
+- Using a traditional packet filter, we can only filter based on information in the packet headers: the IP address, port numbers, and control bits. WE can't just allow packets to come in if they start at a given source port, because then attackers could simply set their port scanners to use a source TCP port of 80 and scan the entire network 
+
+The resolution implemented in many traditional (nonstateful) packet filters invovles checking the TCP control bits of incoming packets. 
+- We will drop all incoming connections that don't have the ACK control bit set.
+- All responses to internally initiated traffic, which we ant to allow, will have the ACK bit set. This way no sessions can be initiated from the external network, because they would have a SYN control bit. 
+- The middle shows these incoming ACK packets. These packets with the ACK bit set are often referred to as established connection, because they are responses to connections already established using packets from the inside. 
+
+![ff3ac3ba3eeb8416087c1fa0be7e1011.png](../_resources/ff3ac3ba3eeb8416087c1fa0be7e1011.png)
+
+So we have not solved the problem of allowing incoming responses to our outgoing sessions. An attacker could still send packets with the ACK control bit set and bypass the packet filtering. 
+
+The figure below shows how an attacker can conduct an ACK scan to determine which ports through the firewall allow established connection responses. 
+- In an ACK scan, Nmap sends an ACK packet to each of the target ports
+- If a RESET comes back from the target machine, we know that our packet got through the packet-filtering device, and there appears to be a system at the given address that needs to be scanned.
+- When this happens, Nmap classifies the target port as unfiltered in its output, because the packet-filtering device allows established connections to that target port on the internal network. 
+- If no response or an ICMP Port Unreachable message is returned, Nmap labels the target port as filtered, meaning that it appears something is obstructing the response, likely a packet filter. 
+![fb84f97bcce1240c515e129bb6fe72a5.png](../_resources/fb84f97bcce1240c515e129bb6fe72a5.png)
+
+Unfortunately, different operating systems respond in different manners to ACK packets sent to open or closed ports. Some operating systems send a RESET if the port is open, whereas others send it if the port is closed. Thus, ACK scanning is not useful in determining if a port is open or closed; it is useful in measuring filtering capabilities of simple routers and firewalls, as well as determining which addresses are in use. 
+
+### Obscuring the Source: FTP Bounce Scans
+The last thing an attacker wants is for their source IP address to show up in the logs of a target system or network, because an investigator will be able to find the system used to launch the scan. 
+- For particularly nasty attacks, an investigator may even call law enforcement, diligent police officers might show up with handcuffs, and the attacker would have a very bad day indeed. 
+
+To obscure their location, attackers sometimes use Nmap's FTP Proxy Bounce scan option, which utilizes an old feature of FTP servers. 
+- FTP servers supporting this old option allow a user to connect to them and request that the server send a file to another system
+- With this FTP file forwarding feature, an FTP client can request that a file be forwarded to another machine. 
+- This feature may be severely outdated
+
+Using this feature, an attacker can bounce an Nmap TCP scan off of an innoncent FTP server to help obscure the source of the attack. As shown in the figure below. 
+![1879dce46d1664ab4c12e0795f0b1738.png](../_resources/1879dce46d1664ab4c12e0795f0b1738.png)
+
+Nmap opens an FTP control connection to the FTP server configured to support the file-forward feature. Then, the attacker's tool requests that the innocent FTP server forward a file to a given port on the target's system. 
+
+Only by analyzing the FTP server's logs can the true source of the scan be identified. 
+
+### Idle Scanning: An Even Better Way to Obscure The Source Address
+
+Now, suppose the attacker cannot find an FTP server supporting this bounce capability, but still wants to obscure the source of a scan so the target doesn't know the attacker's IP address. 
+- Nmap supports a more wider source-obscuring option called Idle scanning
+
+To understand Idle Scanning we need to revisit the IP header format we discussed in Chapter 2. 
+- The IP header includes a field named IP Identification (also known as IP ID)
+- This field is used to group together a bunch of packet fragments that all belong to one larger packet, so when a large packet is broken into smaller packets they will all have the same IP ID value to tell the end system that they should all be reassembled together into a larger IP packet. 
+- The reason we use this is because some network links have better performance with smaller packets, so we let router or other gateway devices fragment packets to achieve better speed and link utilization.
+
+For each packet a system sends, its IP stack must assign a unique number in the IP ID field. 
+- If a machine were to generate two different packets with the same IP ID value and send them across the network at the same time, and if both of those packets get fragmented, the end system will try reassembling them together into a single packet, seriously mangling the information.
+
+Many operating systems achieve a unique number for the IP ID field by just incrementing the field by one for each packet that they send. 
+- So if the first packet that gets sent has an IP ID of X, the second packet will have an IP ID of X+1
+
+To use idle scanning, the attacker first picks a machine to blame for the attack. 
+- The Idle scan makes it appear that this blamed machine launched the scan against the target, from the target's perspective.
+- This blamed machine could be any system on the internet that the attacker can send packets to and receive packets from, such as a popular web server, a client machine hanging off of a cable modem, or someone's mail server. 
+
+This blamed machine must have two highly related characteristics:
+1. The blamed machine must have a predictable IP ID field (ideally incrementing by one for each packet it sends). Most windows machines will do nicely
+2. The blamed machine cannot send much traffic, it has to be idle, which gives this scan type its name.
+
+These two characteristics related in that, if the blamed machine weren't idle, it would send traffic incrementing the IP ID field. 
+- The IP ID field wouldn't then be very predictable because it would keep changing for each packet that the blamed system spews out.
+
+Consider the figure below which shows how the attacker gets ready to launch an idle scan.
+![dcb3da436ab5b0f8164ddeda523d9f82.png](../_resources/dcb3da436ab5b0f8164ddeda523d9f82.png)
+
+In Step 1, the attacker sends a SYN packet to the blamed machine. The attacker responds with a SYN-ACK in step 2. This response includes an IP header, with an IP ID field we'll call X . In Step 3, the attacker remembers X. The bad guy might run through steps 1 through 3 a dozen or more times, just to make sure X changes in a predictable fashion. 
+
+Now, on the scan, shown in the figure below, in Step 4, the attacker selects a port that is going to be tested on the target machine. The attacker sends a SYN packet to the target's destination port. The attacker spoofs the source IP address in this SYN packet so that it appears to be coming from the blamed machine. 
+
+![a8fda10bf4224e897d8ce789261df5f4.png](../_resources/a8fda10bf4224e897d8ce789261df5f4.png)
+If the target port is listening in step 5, the target sends a SYN-ACK response back to the apparent source address of the SYN packet. That is, the target sends a SYN-ACK to the blamed machine if the port is listening. When the blamed machine receives a SYN-ACK out of the blue, it won't understand why the target sent a response for a never-initiated connection.
+
+In Step 6, the blamed machine therefore responds with a RESET. Because it is a RESET packet, the IP ID field on the machine that gets blamed will be incremented, to X+1, if the port is listening. 
+
+Now, if the target port is closed, Step 5 either has no traffic going from the target to the blamed machine, or it sends something like a RESET message. Either way, if the target port is closed, no traffic is sent in Step 6. Therefore the IP ID field will remain at X if the port is not listening. 
+
+In Step 7, the attacker needs to measure the IP ID field on the blamed machine by sending a SYN packet to it. In Step 8, the blamed machine responds with a SYN-ACK. Of course, the SYN-ACK response will increments the IP ID field by one. 
+
+Now, by analyzing the IP ID field from Step 8, the attacker can determine if the port is open or closed on the target. If the IP ID value is X+2, the attacker knows it was incremented once because of Step 7. Therefore, it must have been incremented another time. Because the blamed machine was idle, it was likely incremented because Step 6 occurred and included a RESET packet. This means that the port is therefore open.
+
+The logic is even more compelling if the port is closed. If, in step 8, the IP ID value is X+1, the blamed machine could not have sent a RESET in step 6. Of course, if it didn't send a RESET, no SYN-ACK could have occurred in Step 5. Without a SYN-ACK the port must have been closed. 
+
+From the target's perspective, thee whole scan appears to be coming from the blamed machine, leaving the attacker stealthy and happy. An attacker using Nmap doesn't have to understand all of this, Nmap will do all of this for you. 
+
+## Don't Forget UDP 
+Because UDP is much more simpler, Nmap has far fewer options for UDP scanning, and UDP scans from any port-scanning tool are inherently less reliable. 
+
+All the previously mentioned techniques work with TCP because of things like its control bits etc
+
+## Version Scanning
+Nmap also includes a Version-scan feature that allows the attacker to detect which ports are open and also the particular service and software version listening on those ports. 
+
+Not all services listen on their "official" port. A web server could run on port 35567 because it helps hide that it is a web server. Nmap Version-scan capability will still smoke out the Web server, even detecting applications that are running over Secure Sockets Layer (SSL). 
+
+Nmap starts with a normal port scan and gathers a list of all open ports on a target. For TCP ports after the 3-way handshake, some applications will present their banners indicating the service type and version number. If Nmap receives a banner, its version scanning functionality matches the banner against an internal version-scan database and attempts to find a matching application to display for the attacker. 
+
+## OH Yes, Ping Sweeps Too
+Nmap's ping scan capability supports identifying live hosts on the target network. 
+- Nmap sends an ICMP Echo Request packet to all addresses on the target network to determine which have listening machines
+- Furthermore, Nmap can conduct a sweep of addresses using TCP packets, instead of ICMP. 
+
+## Find Those Insecure RPC Programs
+Nmap also supports an application-level scanning option focused on RPCs, which are convenient tool for software developers creating distributed systems. 
+- As shown in the figure below, an RPC program takes the software developer's concept of a procedure call and extends it across a network.
+- Code executes on one computer until it needs information from another system
+- Then the originating program calls an RPC program on another machine, where processing continues.
+- When the remote system ahs finished the procedure, it returns its results and execution flow to the original machine
+
+![0c61729595daeb335edacbdb5e0660cb.png](../_resources/0c61729595daeb335edacbdb5e0660cb.png)
+
+Familiar RPC services on Unix and Linux environments include:
+- Rpc.rstatd: a service that returns performance stats from the server's kernel
+- Rwalld: a service allowing message to be sent to users logged into a machine
+- Rup: displays current up time and load average of the server
+- Sadmind: an older service used to administer Solaris systems
+- Rpc.statd: a service associated with locking files and sending reboot notification for the Network File System (NFS)
+
+## Setting Source Ports For A Successful Scan
+To improve the chances that the packets generated by the scanner will get through routers and firewalls protecting the target network, attackers typically choose specific TCP and UDP source ports for the packets transmitted during a scan.
+- Remember, the scanner sends the packets to the target system, varying the destination port to determine which are open or closed. 
+- The source port is also included in the header, and might be used by the target network to determine whether the traffic should be allowed.
+- The goal here is to use the source port so that the packets appear like normal traffic, thereby increasing the chance they'll be allowed into the network and lowering the potential for detection. 
+- Nmap can be configured to use various source ports for all packets in the scan.
+
+TCP port 80 is a popular choice for a source port during a scan, as the resulting traffic might appear to be coming from a Web server. Attackers also widely use source TCP port 25, which appears to be traffic from an internet mail server using the Simple Mail Transfer Protocol (SMTP). 
+
+Another interesting option involves using a TCP source port of 20, which will look like an FTP data connection. As shown in the figure below, when you FTP a file, you actually create two connections, an FTP control connection and a FTP data connection. 
+![e8d10a1d81e028f288140beae24118c0.png](../_resources/e8d10a1d81e028f288140beae24118c0.png)
+
+The FTP control connection is opened from client to server, and carries commands to the server, such as logging in, requesting a file list, and so on. After receiving a request for a file, the FTP server opens a connection back to the FTP client. That's what makes standard FTP somewhat harder for simple routers and firewalls to handle--the FTP data connection starts from the server and comes back to the client. 
+
+Some attacks try to take advantage of networks that allow standard inbound FTP data connections by conducting a port scan using a TCP source port of 20. As shown in the figure below. 
+
+![7f32e986549eb5d7662cc8b65f88bdb7.png](../_resources/7f32e986549eb5d7662cc8b65f88bdb7.png)
+
+Same can be done with UDP port 53, since it can often appear to be DNS
+
+### Decoys Aren't Just For Duck Hunters Anymore
+In addition to the FTP Bounce and Idle Scans, Nmap can hide the attacker's address by inserting spoofed decoy source addresses in various scans.
+- When configuring Nmap with decoys, the attacker enters a complete list of IP addresses that will be used as the apparent source of the packets. 
+- For each packet it sends during a scan, Nmap generates a copy of the packet appearing to originate at each decoy address. 
+
+So if an attacker enters four decoys, Nmap generates five packets for each port to be checked--one with a source of the attacker's actual IP address, and one from each of the four decoys
+
+These decoys are designed to confuse the target the target with a bunch of traffic from innocent sources 
+
+The attacker's actual address needs to be included in each barrage of packets or the attacker will not be able to get the results from the scan. 
+
+## A Critical Feature: Active Operating System Fingerprinting 
+An attacker may want to determine which underlying operating system the target machine is running. By determining the operating system type, the attacker can further research the machine to determine particular vulnerabilities for that type of system. 
+
+To determine the operating system type, Nmap uses a technique called active operating system fingerprinting. 
+
+Because RFCs are more used to explain how something does work, there is a lack of a coherent standard in regards to TCP stack responses. For example, a Windows TCP stack responds differently from a Linux machine to illegal control bit sequences. Nmap uses this inconsistency to determine the operating system type of the target machine by sending out a series of packets to various ports on the target including the following:
+![a1f781f54745abb886dc6b04944c39b7.png](../_resources/a1f781f54745abb886dc6b04944c39b7.png)
+
+This overall process of sending traffic to measure the operating system type is called active operating system fingerprinting because the attacker interacts with the target, sending packets to make the operating system measurement. 
+
+Xprobe2 is another software that performs OS fingerprinting it has two major differences compared to Nmap
+- Sends fewer packets because of its embedded tightly coded logic tree
+- Gives probabilities of what OS a system might have instead of just giving most likely answer 
+
+Good idea to run both systems
+
+## Useful Timing Options 
+An attacker might want to send packets very slowly to a target to help spread out the appearance of log entries resulting from the scan. Additionally, if a scan occurs too quickly against a slow target, it is possible for open ports to be missed, or the target system could even crash in a flood of packets. 
+
+Nmap includes different timing options for scans. These timing options have wonderfully descriptive names such as:
+- paranoid: Sends one packet approximately every 5 minutes resulting in a super-slow scan
+- sneaky: Sends one packet approximately every 15 seconds
+- polite: Sends one packet approximately every 0.4 seconds
+- normal: Runs as quickly as possible without missing target ports
+- aggressive: waits a maximum of 1.25 seconds for any response
+- insane: Waits a max of 0.3 seconds for any response. You will lose traffic in this mode, getting false negatives listing open ports as closed because you were too impatient to wait for their responses. 
+
+### A Little Bit of Fragmentation Never Hurt Anyone
+Nmap supports slicing IP packets into smaller chunks, which can foil some network based IPS/IDS
+
+# Defenses Against Port Scanning
+## Harden Your Systems
+The best way to prevent an attacker from discovering open ports on your machine is to close all unused ports. 
+
+When you bring a new system online, you should be very familiar with the ports that are open on the box and why they are required. All unneeded ports and their related services must be shut off. You should also create a secure configuration document that describes how a new machine should be securely hardened. 
+
+Also, check periodically to see which TCP and UDP ports are in use on your machine, either from across the network (using a port scanner like Nmap) or locally. The procedure for checking locally listening ports and shutting off unneeded ones varies between Windows and Linux/UNIX.
+
+On Windows you can run ```netstat -na``` from a command prompt to see which ports are in use. To be even more specific and look for just listening ports, you can type 
+
+```C:\> netstat -na | find "LISTENING"```
+
+
+You can add the ```-o``` flag for ```nestat -nao``` which shows the listening ports, as well as the process ID (PID) of the listening process. 
+
+A cleaner way to disable a listening port, if the listening process was started as a Windows Service, involves disabling the service itself. You can do this by running the services control, easily invoked by going to Start-> Run... and typing ```services.msc``` Then double-click the offending service, click Stop and set its Startup to Disabled. 
+
+If you are more command-line oriented, you can do the same thing using the Service Controller command, ```sc```, built into Windows XP and Windows 2003. To get a list of services and their status, type ```sc query```. To stop a service temporarily, until the next reboot type ```sc stop [service]```
+- To permanently disable a service type ```sc config [service] start= disabled```
+
+On Linux you can use the ```-p``` flag on netstat so ```netstat -nap``` to view PIDs and program names. We can get even more details about process listening on ports using the ```lsof``` command. 
+- Run the ```lsof``` command using the ```-i``` flag to list all TCP and UDP ports in use. 
+- Then using the PID of the process I can review it in more detail using ```lsof -p [pid]``` as shown in the figure below.
+- BASED ON CURRENT LINUX, THIS MAY NO LONGER WORK
+![08fa663a08d8f17d64bfbe4b91e42f82.png](../_resources/08fa663a08d8f17d64bfbe4b91e42f82.png)
+
+To stop a process on Linux or UNIX, you can use the kill [pid] command. The procedure for disabling a service listening on a port permanently depends on whether the service is invoked by ```inetd, xinetd```, or one of the service initialization scripts. 
+
+1. If the service is started by ```inetd``` you can comment out its line in ```/etc/inetd.conf``` by placing a ```#``` at the beginning of the line
+2. If the service is started by ```xinetd```, you can delete the file ```/etc/xinetd.d/[service]``` or edit that file so that it contains a line that says ```disable=yes```
+3. If the service is started by one of the service initialization scripts, it will have a linked called ```S[Number] [Service]``` in the directory ```/etc/init.d``` You can shut off such services by editing the ```rc.d``` directory for each runlevel on your system. 
+
+Furthermore, for critical systems, you might want to delete the program files associated with the unneeded service. Even if the service software is not actively running on the machine, it could allow a malicious user with access to the system to do nasty things. 
+- Leaving GUI software disabled but not removed off the system is an example
+- Leaving a C compiler in a production web server, is another example
+
+Leaving these tools on the system makes the attacker's job easier. Try these changes first on a test infrastructure mimicking your production environment to make sure your systems operate properly. 
+
+### Find the Opening Before the Attackers Do
+As with war driving and war dialing, you should scan your systems before an attacker does to verify that all ports are closed except those that have a defined business need.
+- You can use Nmap to scan each of your internet accessible systems, as well as critical internal machines. 
+
+### Be Careful: Don't Shoot Yourself in the Foot!
+It is critical to note that you could very easily cause mayhem on your network by running any one of the scanning tools described in this chapter against your system. A periodic ping to the target machine can help you verify that it is alive while scanning occurs. 
+
+### Add Some Intelligence: Use Stateful Packet Filters or Proxies
+Scans using the FTP data source port and ACK scans, along with other techniques supported by Nmap take advantage of limitations in traditional packet filters. 
+- These filters make decisions based on the contents of the packet's header, a very limited view of what's really happening on the network
+- If you use a router or firewall with only traditional packet-filtering capabilities, an attacker can scan past your defenses
+
+Conversely, stateful packet filters can remember earlier packets and allow new packets through a barrier if they are associated with earlier packets. This capability is tremendously helpful in protecting against ACK scans and the FTP data source port scans. 
+- Using stateful packet filtering, an ACK packet will be allowed into a network only if it comes form the proper address and ports used by an earlier SYN packet that was allowed out of the network. 
+- The stateful packet filter remembers all out-going SYNs in a connection table, and checks incoming packets to verify their association with an earlier SYN. 
+
+Alternatively, proxy-based firewalls operate at the application level, so it knows when a session is present. 
+- An incoming ACK packet will be dropped because there is not an outgoing session at the application level
+- An FTP data connection will only be allowed if the proxy ahs an established FTP control connection. 
+
+## Determining Firewall Filter Rules With Firewalk
+Additional port-scanning techniques give an attacker even more information about the target network infrastructure. In particular, Firewalk allows an attacker to determine which packets are allowed through a packet-filtering device, such as a router or firewall. 
+- Knowing which ports are open through your firewall is incredibly useful information for an attacker.
+
+There is a crucial difference between Nmap and Firewalk. 
+- Remember Nmap is used to send packets to an end system to determine which ports are listneing on that given target machine. 
+
 # Summary
