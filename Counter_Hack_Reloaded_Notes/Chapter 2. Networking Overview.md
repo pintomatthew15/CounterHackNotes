@@ -15,7 +15,7 @@ The Open Systems Interconnection (OSI) Reference Model was based on the idea of 
 In a layered communication stack, a layer on the sending machine communicates with the same layer on the receiving machine.
 
 - Lower layers provide services to higher layers. Lower layers are able to retransmit lost packets on behalf of a higher layer.
-    ![1121b7dcc29dcd9f5d1166cb1bd80406.png](../../_resources/1121b7dcc29dcd9f5d1166cb1bd80406.png)
+    ![1121b7dcc29dcd9f5d1166cb1bd80406.png](../_resources/1121b7dcc29dcd9f5d1166cb1bd80406.png)
 
 There are 7 layers in the OSI Model
 Layer 1: The Physical Layer
@@ -41,12 +41,12 @@ When an application makes a web request, the Transport Layer adds a header to th
 This package is sent to the Data Link and Physical Layers, where a header (and trailer) are added to create a frame, so the data can be transmitted across the link.
 
 Upon receiving the data, the destination system opens all the envelopes, layer by layer.
-![c580ae54c5519cc8590f5e46120228ff.png](../../_resources/c580ae54c5519cc8590f5e46120228ff.png)
+![c580ae54c5519cc8590f5e46120228ff.png](../_resources/c580ae54c5519cc8590f5e46120228ff.png)
 
 ## TCP/IP Family
 
 The TCP/IP family of protocols includes several components: TCP, UDP, IP, and Internet Control Message Protocol (ICMP)
-![d0560476d94e76194354f787118f8632.png](../../_resources/d0560476d94e76194354f787118f8632.png)
+![d0560476d94e76194354f787118f8632.png](../_resources/d0560476d94e76194354f787118f8632.png)
 
 TCP/IP stack does not allow for confidentiality and integrity. We use a protocol extension named IPSec
 
@@ -63,21 +63,21 @@ TCP is the workhorse of the Internet. Applications that use TCP:
 - SMTP and POP (Email)
 
 Each of these applications generate a packet and passes it to the TCP/IP stack of a local machine. The TCP layer software creates TCP packets by placing a TCP header at the front of each packet.
-![8244dbfb66b842d6d2b46c482f8edeb3.png](../../_resources/8244dbfb66b842d6d2b46c482f8edeb3.png)
+![8244dbfb66b842d6d2b46c482f8edeb3.png](../_resources/8244dbfb66b842d6d2b46c482f8edeb3.png)
 
-![40a809bc1dfb2a4ace4155b134ae7754.png](../../_resources/40a809bc1dfb2a4ace4155b134ae7754.png)
+![40a809bc1dfb2a4ace4155b134ae7754.png](../_resources/40a809bc1dfb2a4ace4155b134ae7754.png)
 
 To see which ports are in use on a Windows, Linux, or UNIX system, you can use the `netstat` command locally on the machine. If you type `netstat -na` all ports receiving and listening to data will be shown
 
 - The `-na` flags in the command mean show all ports, and list the network addresses in numerical form (don't print out the full machine and service names)
-    ![cbf4cbda744d71eeefafd49b2dc1e820.png](../../_resources/cbf4cbda744d71eeefafd49b2dc1e820.png)
+    ![cbf4cbda744d71eeefafd49b2dc1e820.png](../_resources/cbf4cbda744d71eeefafd49b2dc1e820.png)
 
 ### TCP Control Bits, The Three-Way Handshake, and Sequence Numbers
 
 The TCP control bits, also known as the TCP flags, are a particularly useful part of the TCP header.
 
 - Some of these eight small fields (each only one bit in length) describe what part of a session the TCP packet is associated with, such as session information, acknowledgement, or session tear down.
-    ![339cc6e4f20d9516ce7da32df1d79fcf.png](../../_resources/339cc6e4f20d9516ce7da32df1d79fcf.png)
+    ![339cc6e4f20d9516ce7da32df1d79fcf.png](../_resources/339cc6e4f20d9516ce7da32df1d79fcf.png)
 
 One or two control bits are set to one in a given packet. The original six individual control bits have the following meanings:
 
@@ -97,7 +97,7 @@ All legitimate TCP connections are established using a three-way handshake, a fu
 
 - 3-way handshake allows system to open a communication session, exchanging a set of sequence numbers for packets to use throughout the session.
 
-![65f56c10f71fb22cd9f7c974bfd183b2.png](../../_resources/65f56c10f71fb22cd9f7c974bfd183b2.png)
+![65f56c10f71fb22cd9f7c974bfd183b2.png](../_resources/65f56c10f71fb22cd9f7c974bfd183b2.png)
 **Three Way Handshake Steps**
 
 Step 1: Alice sends a packet with the SYN control bit set and with the sequence number set to some initial value, known as the initial sequence number.
@@ -144,7 +144,7 @@ UDP is connectionless--the protocol doesn't know or remember the state of a conn
 
 UDP is inherently unreliable, but sometimes unreliability is acceptable, particularly when it can buy you speed. Some applications don't want to overhead of 3-way handshakes, sequence numbers, and acknowledgements.
 
-![0bc0921b493a45589245b77994860651.png](../../_resources/0bc0921b493a45589245b77994860651.png)
+![0bc0921b493a45589245b77994860651.png](../_resources/0bc0921b493a45589245b77994860651.png)
 
 UDP has 16-bit port numbers, so there are 65,536 possible UDP ports (including UDP port zero, which is reserved).
 
@@ -165,7 +165,7 @@ Once the transport layer generates either a TCP or UDP packet, it must be passed
 
 In receiving information from the Transport layer, the IP layer generates a header. The header is added to the front of the TCP packet to create a resulting IP packet, which will carry the entire contents across the network.
 
-![533b6bb708d7e981114ee24c219d65e3.png](../../_resources/533b6bb708d7e981114ee24c219d65e3.png)
+![533b6bb708d7e981114ee24c219d65e3.png](../_resources/533b6bb708d7e981114ee24c219d65e3.png)
 
 ### LANs and Routers
 
@@ -174,7 +174,7 @@ Complete networks are typically made up of fundamental building blocks called LA
 - A LAN is simply a bunch of computers connected together using a hub, switch, or wireless access point, with no routers separating the systems.
 - LANs are typically geographically small, usually within a single building or small campus.
 
-![61ef98109011b222ca614abc5eaa91ea.png](../../_resources/61ef98109011b222ca614abc5eaa91ea.png)
+![61ef98109011b222ca614abc5eaa91ea.png](../_resources/61ef98109011b222ca614abc5eaa91ea.png)
 
 LANs are connected together using routers. A router's job is to move packets between the LANs, thereby creating a big network like the image above. One or more Network layer protocols move data end to end across the network.
 
@@ -185,7 +185,7 @@ Also some systems are directly connected to routers or each other using point-to
 IP addresses identify a particular machine on the network, and are 32 bits in length for IPv4. Every system directly connected to the internet has a unique IP address.
 
 IP addresses are written in dotted-quad notation. Each of the four eight-bit bundles of the IP address are written as decimal numbers between 0 and 255. resulting in an IP address of the form w.x.y.z, such as 10.21.41.3.
-![7250c187f1755f5e0fe68bbbed0ebf6b.png](../../_resources/7250c187f1755f5e0fe68bbbed0ebf6b.png)
+![7250c187f1755f5e0fe68bbbed0ebf6b.png](../_resources/7250c187f1755f5e0fe68bbbed0ebf6b.png)
 
 Every IP packet contains a source IP address and a destination IP address.
 
@@ -201,7 +201,7 @@ A computer knows which part is which through the use of a netmask. The netmask d
 - The netmask is a binary number that has its bits set to 1 when a given bit in the IP address is part of the network address.
 - Therefore you can figure out what the network address is by simply combining the whole IP address with the netmask using the logical AND function.
 
-![7697cc26dfb3227bb0466d103218813b.png](../../_resources/7697cc26dfb3227bb0466d103218813b.png)
+![7697cc26dfb3227bb0466d103218813b.png](../_resources/7697cc26dfb3227bb0466d103218813b.png)
 
 Sometimes netmasks are indicated using Classless Inter-Domain Routing (CIDR) notation, where the IP address is followed by a slash and then a number (10.21.0.0/16). The number after the slash indicates the number of 1 bits in the netmask, or in other words, the number of bits of the given IP address that are associated with the network component of that IP address.
 
@@ -255,8 +255,8 @@ One system can use ICMP to determine whether another system is alive by sending 
 - **BOTTOM LINE: ICMP is used for systems to exchange information about how data is flowing (or not flowing) through the network**
 
 ICMP uses the same header format as IP for source and destination IP addresses, packet fragmentation, and other functions. The protocol field of the IP header is loaded with a value corresponding to ICMP. After the IP header, in the data component of the IP packet, ICMP adds a field known as the ICMP type. Format depends on which ICMP type is chosen.
-![70945bf5ea50eaa2560dbdac2cadc3c8.png](../../_resources/70945bf5ea50eaa2560dbdac2cadc3c8.png)
-![ac1876cf84f3fe29c549814523088dea.png](../../_resources/ac1876cf84f3fe29c549814523088dea.png)
+![70945bf5ea50eaa2560dbdac2cadc3c8.png](../_resources/70945bf5ea50eaa2560dbdac2cadc3c8.png)
+![ac1876cf84f3fe29c549814523088dea.png](../_resources/ac1876cf84f3fe29c549814523088dea.png)
 
 ## Other Network-Level Issues
 
@@ -291,7 +291,7 @@ The gateway can map the addresses for NAT in a variety of ways, including the fo
 - Mapping to single external IP address: On the internet, all traffic appears to be coming from the NAT device's IP address. Many NAT devices set a unique source port number in all outbound packets whose address has been translated, so that responses coming back to that port can be mapped back to the proper internal IP address and the original internal port.
 - One-to-one mapping: The gateway could map each machine on the internal network to a unique valid IP address associated with each single machine. Therefore all traffic would appear to come from a group of IP addresses. This technique is used to map user requests across the Internet to servers on a perimeter network, such as a Web server on the DMZ.
 - Dynamically allocated address: The gateway could multiplex a large number of unrouteable IP addresses to a smaller number of valid IP addresses.
-    ![17fab24c7f2a37fc642b4206020fbd8b.png](../../_resources/17fab24c7f2a37fc642b4206020fbd8b.png)
+    ![17fab24c7f2a37fc642b4206020fbd8b.png](../_resources/17fab24c7f2a37fc642b4206020fbd8b.png)
 
 NAT by itself is not good enough for security
 
@@ -300,7 +300,7 @@ NAT by itself is not good enough for security
 Firewalls are tools that control the flow of traffic going between networks.
 
 Firewalls must allow at least some outgoing connections, so internal users can access the external network, while denying most incoming connections, except for specified services.
-![199ae66eb58744badd921f1970f7ee5b.png](../../_resources/199ae66eb58744badd921f1970f7ee5b.png)
+![199ae66eb58744badd921f1970f7ee5b.png](../_resources/199ae66eb58744badd921f1970f7ee5b.png)
 
 #### Traditional Packet Filters
 
@@ -316,12 +316,12 @@ Packet filters focus on individual packets, analyzing their header information a
 - Interface: Did the packet come from a trusted network or an untrusted network? The packet-filtering device can transmit or drop packets based on the network interface on which they arrive.
 
 Firewall rules are referred to as Access Control Lists (ACLs)
-![b69f73c0e16f27f57f0ce8bf5b20461c.png](../../_resources/b69f73c0e16f27f57f0ce8bf5b20461c.png)
+![b69f73c0e16f27f57f0ce8bf5b20461c.png](../_resources/b69f73c0e16f27f57f0ce8bf5b20461c.png)
 
 #### Stateful Packet Filters
 
 A stateful packet filter can remember earlier packets that went through the device and make decisions about later packets based on this memory. Their memory is implemented in a state table, which stores information about each active connection and other memorable packets. The state table is dynamic, updated in real time as packets traverse the device.
-![6426e8349c234c8052454599813da323.png](../../_resources/6426e8349c234c8052454599813da323.png)
+![6426e8349c234c8052454599813da323.png](../_resources/6426e8349c234c8052454599813da323.png)
 
 State tables remember packets for a set amount of time, usually ranging between 10 and 90 seconds, or even longer in some implementations. After that interval, if no further packets are associated with the entry in the state table, the entry is deleted, meaning no further packets are allowed for that connection.
 
@@ -330,7 +330,7 @@ State tables remember packets for a set amount of time, usually ranging between 
 Proxies represent an entirely different approach to controlling the flow of information through a fire-wall. Rather than obsessing over packets, proxies focus on the application level, analyzing the application information passing through them to make decisions about transmitting or dropping.
 
 A client interacts with the proxy, and the proxy interacts with a server on behalf of the client. All connections for other applications, clients, or servers can be dropped.
-![2e877a4768d785bb430f0148d89af813.png](../../_resources/2e877a4768d785bb430f0148d89af813.png)
+![2e877a4768d785bb430f0148d89af813.png](../_resources/2e877a4768d785bb430f0148d89af813.png)
 
 Given its focus on the application level, a proxy-based firewall can comb through the application-level protocol to ensure that all exchanges strictly conform to the protocol message set.
 
@@ -343,7 +343,7 @@ They are not exactly firewalls but they do share many important characteristics.
 - Some IPS even maintain a sense of normal traffic behavior and look for deviations from normal patterns consistent with a scan or propagating malicious code such as worms.
 
 Unlike IPSs, firewalls don't have signatures for specific kinds of attack, nor do they typically have knowledge of normal traffic patterns.
-![b4283c34fb0d60a30799df411398e98e.png](../../_resources/b4283c34fb0d60a30799df411398e98e.png)
+![b4283c34fb0d60a30799df411398e98e.png](../_resources/b4283c34fb0d60a30799df411398e98e.png)
 
 ## Don't Forget About the Data Link and Physical Layers
 
@@ -378,7 +378,7 @@ When one system has a packet to send across the LAN, it sends out an ARP query. 
 
 Systems use an ARP cache which stores recent IP to MAC address mappings tp minimize future ARP traffic. The ARP cache effectively maps Layer 3 (The IP address) to Layer 2 (The MAC address), and is stored on each system communicating on the LAN.
 
-![bbcd419e22f98415637d2e654e0e47b5.png](../../_resources/bbcd419e22f98415637d2e654e0e47b5.png)
+![bbcd419e22f98415637d2e654e0e47b5.png](../_resources/bbcd419e22f98415637d2e654e0e47b5.png)
 
 ARP only exists between layers 2 and 3 does not expand into the rest of the OSI model
 
@@ -388,8 +388,8 @@ Ethernet LANS are constructed through hubs or switches, devices that have variou
 
 - A hub broadcasts all information received on one physical interface to all other connections on the box.
 - A switch on the other hand, has additional intelligence so that it doesn't have to broadcast on all physical interfaces using stored MAC addresses.
-    ![d3b885bdfa19b51d9d61db0524eb172e.png](../../_resources/d3b885bdfa19b51d9d61db0524eb172e.png)
-    ![dfea63440129f6d27706ac238ba634a4.png](../../_resources/dfea63440129f6d27706ac238ba634a4.png)
+    ![d3b885bdfa19b51d9d61db0524eb172e.png](../_resources/d3b885bdfa19b51d9d61db0524eb172e.png)
+    ![dfea63440129f6d27706ac238ba634a4.png](../_resources/dfea63440129f6d27706ac238ba634a4.png)
 
 ### 802.11: The King of Wireless Connectivity
 
@@ -430,12 +430,12 @@ These management frames are highly useful to attackers in a variety of ways in l
 Traditionally TCP/IP stacks offer no real protections for ensuring the confidentiality, integrity, authentication, and availability of data as it is transmitted through the network. There have been some advances in implementing application layer security post production.
 
 ### Application-Level Security
-![38c1e9da0d1acd6c7e38eefed1df3430.png](../../_resources/38c1e9da0d1acd6c7e38eefed1df3430.png)
-![59e675ff58ded7fecb11f550f57b3403.png](../../_resources/59e675ff58ded7fecb11f550f57b3403.png)
+![38c1e9da0d1acd6c7e38eefed1df3430.png](../_resources/38c1e9da0d1acd6c7e38eefed1df3430.png)
+![59e675ff58ded7fecb11f550f57b3403.png](../_resources/59e675ff58ded7fecb11f550f57b3403.png)
 
 ### The Secure Sockets Layer (SSL) and Transport Layer Security (TLS)
 Another option for providing security services to TCP/IP applications involves implementing security at a layer just above TCP/IP known as the Sockets Layer. An application can include its own implementation of a Sockets Layer that has security capabilities, which sits between higher level application functions and the TCP/IP stack. 
-![c28055c28e20718c99a919e5c75919ac.png](../../_resources/c28055c28e20718c99a919e5c75919ac.png)
+![c28055c28e20718c99a919e5c75919ac.png](../_resources/c28055c28e20718c99a919e5c75919ac.png)
 
 SSL and TLS allow applications to have authenticated, encrypted communications across a network. Both communicating sides of the application requiring security must include an implementation of SSL, which encrypts all data to be transported and sends the information to the TCP/IP stack for delivery. 
 - SSL relies on digital certificates to authenticate systems and distribute encryption keys. These digital certificates act like cryptographic identification cards, which can be used to verify another party's identity. 
@@ -450,7 +450,7 @@ To establish an SSL session between two systems, SSL defines a carefully orchest
 - The server follows up with some pretty important data, the CERTIFICATE message, which includes the server's digital certificate, that crucial data structure holds the server's public encryption key digitally signed by a certificate authority. This public key corresponds to a private key stored on the server 
 - The server completes its part of the communication with a SERVER_DONE message. 
 - REVIEW THIS MORE IN THE BOOK 
-![19349a6182fec25962366856f9eba5b6.png](../../_resources/19349a6182fec25962366856f9eba5b6.png)
+![19349a6182fec25962366856f9eba5b6.png](../_resources/19349a6182fec25962366856f9eba5b6.png)
 
 If the server certificate is bogus, this whole operation is for nothing. 
 
@@ -465,15 +465,15 @@ IPSec is really made up of two protocols, the Authentication Header (AH) and the
 
 #### The IPSec Authentication Header 
 The AH provides authentication of the data source, data integrity, and, optionally protection against replays. In essence, AH provides digital signatures for IP packets so that attackers cannot send packets impersonating another machine, or alter data as it moves across the network. 
-![da9d08fe89efe7ab4be0fcb04bd838dc.png](../../_resources/da9d08fe89efe7ab4be0fcb04bd838dc.png)
+![da9d08fe89efe7ab4be0fcb04bd838dc.png](../_resources/da9d08fe89efe7ab4be0fcb04bd838dc.png)
 
 The AH format itself, includes several parameters. Of particular interest are the Security parameters index (SPI), the Sequence Number Field, and the Authentication Data. 
-![48fe7699a46f9e0048a2fc0fb967836a.png](../../_resources/48fe7699a46f9e0048a2fc0fb967836a.png)
+![48fe7699a46f9e0048a2fc0fb967836a.png](../_resources/48fe7699a46f9e0048a2fc0fb967836a.png)
 
 #### The IPSec ESP
 ESP is the other protocol of IPSec, it supports confidentiality, and optionally supports authentication of the data source,  data integrity, and protection against replays. In essence, it encrypts packets so attackers cannot understand protected, and to support digital signatures. 
-![048067b79b67bcc20a91ed57f61e92d8.png](../../_resources/048067b79b67bcc20a91ed57f61e92d8.png)
-![592a5d4684a9929b8686dc664df98650.png](../../_resources/592a5d4684a9929b8686dc664df98650.png)
+![048067b79b67bcc20a91ed57f61e92d8.png](../_resources/048067b79b67bcc20a91ed57f61e92d8.png)
+![592a5d4684a9929b8686dc664df98650.png](../_resources/592a5d4684a9929b8686dc664df98650.png)
 
 # Summary
 The TCP/IP suite of protocols is widely used for computer communications today. The OSI reference model is based on the concept of protocol layering, where each layer provides a specific function for the communicating systems. The OSI mode includes seven layers, and TCP/IP roughly corresponds to two middle layers of the model: the Transport Layer and the Network Layer.
