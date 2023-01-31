@@ -830,6 +830,24 @@ FragRouter implements a variety of fragmentation attacks.
 The beauty of FragRouter is that it separates the attack functionality from the fragmentation functionality. As the name implies, it really is a router, implemented in software. As displayed in the figure below, attackers install it on one of their own systems and then use any attack tool to send packets through the machine with FragRouter installed.
 ![06e5d6e8ecc2ab39fc8c51818bffbe8f.png](../../_resources/06e5d6e8ecc2ab39fc8c51818bffbe8f.png)
 
+In using FragRouter, the attacker first chooses a particular attack tool to launch against a target. This tool generates attack packets. These packets are funneled through FragRouter, which slices and dices the packets according to any one of its 35 fragmentation and scrambling options. 
+
+Then FragRouter forwards these packets across the network to their ultimate destination, the target. The separation of the fragmentation function from the particular attack tool allows an attacker to choose any tool, such as a network mapper, port scanner (like Nmap), firewall rule scanner(like Firewalk) or vulnerability scanner (like Nessus)
+
+FragRoute was released as a follow-up tool. It differs from the older FragRouter tool in that it doesn't route. The attack tool has to sit on the same machine as FragRoute itself. 
+
+## IDS and IPS Evasion At The Application Level
+Although FragRouter and FragRoute allow an attacker to manipulate a data stream at the network level, application-level IDS and IPS evasion techniques let the bad guy modify particular application-level syntax to confuse an IDS or IPS. 
+- Whisker, was the first free tool to implement some application level IDS and IPS evasion tactics. 
+
+### Nikto: A CGI Scanner That's Good at IDS and IPS Evasion
+Nikto, is an actively updated Web server scanner with a multitude of features, freely available. It provides similar functionality to the older Whisker tool, but has been extended to do much more.
+
+Nikto scans for more than 2,500 potentially vulnerable Web scripts and related material and understands version-specific configuration problems for more than 230 different Web server version types. 
+
+Most Web applications use some sort of active scripiting technology running on the Web server, such as CGI, ASP, JSP, and PHP scripts. A user might supply information to a CGI script through a form on his or her browser. 
+- When the the form's data is sent to the Web server, the CGI script runs on the Web server, makes calculations, gathers appropriate data, 
+
 
 
 # Summary
