@@ -844,11 +844,63 @@ Although FragRouter and FragRoute allow an attacker to manipulate a data stream 
 Nikto, is an actively updated Web server scanner with a multitude of features, freely available. It provides similar functionality to the older Whisker tool, but has been extended to do much more.
 
 Nikto scans for more than 2,500 potentially vulnerable Web scripts and related material and understands version-specific configuration problems for more than 230 different Web server version types. 
-
+scripting
 Most Web applications use some sort of active scripiting technology running on the Web server, such as CGI, ASP, JSP, and PHP scripts. A user might supply information to a CGI script through a form on his or her browser. 
-- When the the form's data is sent to the Web server, the CGI script runs on the Web server, makes calculations, gathers appropriate data, 
+- When the the form's data is sent to the Web server, the CGI script runs on the Web server, makes calculations, gathers appropriate data, and generates a response for the user.
+- Common CGI functions include searching the Web site for a particular term, entering user contact information, or constructing online calculators. 
 
 
+Unfortunately, a large number of these default CGI/ASP/JSP/PHP Web scripts have major vulnerabilities. 
+- Remember that most of these scripts run on web servers and must process user input, a dangerous thing to do when some of the users might be trying to attack the Web server.
+- Many widely used scripts include flaws that allow an attacker to send escape sequences in the user-supplied input. By escaping from within a running Web script, an attacker can send data directly to the command line of the target system for execution. 
 
+Nikto is the best general-purpose Web vulnerability scanner available today and includes a generous feature set. 
+- It supports scanning virtual Web servers all hosted on a single machine
+- Allows an attacker to perform automated guessing of user ID and passwords for Web authentication
+- Can even use the output from Nmap scan to target Web servers listening on TCP ports 80 and 443
+
+Most IDS and IPS systems have signatures for attacks against known weak Web scripts, and alert an administrator if someone attempts to activate the vulnerable script. 
+- Nikto tries to evade IDS and IPS tools by subtly changing the format of the requests it sends to scan for flawed scripts on the target machine.
+- To see how this works, suppose there is a hypothetical vulnerable CGI script, called broken.cgi
+- When asking if this vulnerable CGI script is present on a Web server, a browser sends an HTTP request across the network with the following format:
+```GET /cgi-bin/broken.cgi HTTP/1.0```
+
+Similar requests are composed for ASP,JSP, PHP, and other environments. 
+- A web server scanner like NIkto will likewise send this request to check if the vulnerable broken.cgi script is present. Nikto will check for thousands of real, known vulnerable scripts. 
+- A network based IDS and IPS tool scans all packets traversing the network looking for any signatures that match requests for known vulnerable Web scripts. 
+- NIkto will evade these tools by manipulating the requests that it sends so they do not match the signatures exactly. 
+
+
+Nikto includes ten different mechanisms for manipulating the HTTP request to avoid detection shown below:
+![f073af2024c9fa06a4eff6d248fce6d4.png](../_resources/f073af2024c9fa06a4eff6d248fce6d4.png)
+![549092620b514387879612d362758e15.png](../_resources/549092620b514387879612d362758e15.png)
+![119824744915c7a13f3b0f411622565f.png](../_resources/119824744915c7a13f3b0f411622565f.png)
+![b9e2cfaa4faa2c7efb53c1fe5607d040.png](../_resources/b9e2cfaa4faa2c7efb53c1fe5607d040.png)
+![6fb2363a7c01e518adf5c00e93ac03b7.png](../_resources/6fb2363a7c01e518adf5c00e93ac03b7.png)
+![2cf268c583eb2232f040b00195f1da3d.png](../_resources/2cf268c583eb2232f040b00195f1da3d.png)
+
+## IDS and IPS Evasion Defense
+### Don't Despair: Utilize IDS and IPS Where Appropriate
+A well-deployed IDS infrastructure can give you an important heads up that a determined attacker is targeting your network. Properly maintained IPS tools will block large numbers of the most common attacks.
+
+### Keep the IDS and IPS Systems and Signatures Up to Date
+Update IDS and IPS on a weekly basis, or more often as new signatures get released.
+
+### Utilize Both Host-Based and Network-Based IDS and IPS
+Whereas a network-based IDS and IPS listen to the network looking for attacks, host-based IDS and IPS tools run on the end system that is under attack. 
+![88793e5fbb432e4451481abe1e835d9e.png](../_resources/88793e5fbb432e4451481abe1e835d9e.png)
 # Summary
+After gathering info in the recon phase, attackers often turn to scanning systems to gather further information about their target. The scanning phase favors attacks, because they only have to find one way in to achieve their goals, and often have the luxury of time.
+
+War driving is the process of finding wireless access points on a target network and determining their SSIDs, which act as network names. The most popular war-driving tool is NetStumbler, which ran on Windows. To detect wireless network, NetStumbler sends probe packets with an SSID field set to "any". With their default configuration, most access points respond to this request. Wellenreiter is a passive tool. 
+
+Attackers use network-mapping techniques to discover an inventory of target machines and the overall topology of the network architecture. By sweeping the target network range, the attacker determines which hosts are present. Using traceroute, the attacker can determine how systems, routers, and firewalls are connected together. To defend against network mapping, you should consider blocking some of the ICMP messages used by networking-mapping tools, at least to sensitive hosts. 
+
+Port scanners are used to determine which ports have listening services on a target network. By interacting with various ports on the target systems, a port scanner can be used to develop a list of running services. One of the most fully featured port scanners is Nmap. Nmap supports a huge number of scanning types, including OS fingerprinting capabilities to determine the underlying OS of target machines based on their protocol behavior. To defend against port scans, you must harden your OS shutting down all unneeded services and applying appropriate filtering.  
+
+Attackers can determine the rules implemented on a packet filtering firewall using Firewalk tool to scan the target network. To defend against Firewalking, make sure your firewall configuration allows only services with a defined business need. 
+
+Vulnerability-scanning tools have the ability to check a target network for hundreds or thousands of vulnerabilities. Nessus is one of the best, and its free. To defend against vulnerability scanners, you must apply system patches on a regular basis, and periodically conduct your own vulnerability scans. 
+
+When conducting scans, attackers employ a variety of techniques to avoid detection by IDSs and IPSs. Evasion techniques operate at the network and at the application level. FragRouter and FragRoute implement network-level IDS and IPS evasion by using packet fragments. Nikto implements application-level IDS and IPS evasion for Web server targets. To foil IDS and IPS evasion techniques, keep your IDS and IPS systems up to date, and utilize both network- and host-based IDSs and IPSs. 
  
