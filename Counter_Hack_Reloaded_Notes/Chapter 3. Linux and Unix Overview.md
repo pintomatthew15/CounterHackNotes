@@ -12,10 +12,10 @@ Linux and Unix are very much organized around their file system structure.
 
 The top of the file system is known as the "root" directory, simply because it's at the top and all other directories are under it. Below the root directory, a number of other directories hold the rest of the information on the machine, including system configuration, system executables, and user data.
 
-![7a93f6356a1ea70903f499251159317d.png](../../_resources/7a93f6356a1ea70903f499251159317d.png)
-![bcc52f641b583a8064330db5bfd5a360.png](../../_resources/bcc52f641b583a8064330db5bfd5a360.png)
-![7aef1923416da84244376c801050e45e.png](../../_resources/7aef1923416da84244376c801050e45e.png)
-![ac58cbc9da65446105d8aca53bf8c251.png](../../_resources/ac58cbc9da65446105d8aca53bf8c251.png)
+![7a93f6356a1ea70903f499251159317d.png](../_resources/7a93f6356a1ea70903f499251159317d.png)
+![bcc52f641b583a8064330db5bfd5a360.png](../_resources/bcc52f641b583a8064330db5bfd5a360.png)
+![7aef1923416da84244376c801050e45e.png](../_resources/7aef1923416da84244376c801050e45e.png)
+![ac58cbc9da65446105d8aca53bf8c251.png](../_resources/ac58cbc9da65446105d8aca53bf8c251.png)
 
 The other directory names are of paramount importance in UNIX: the names "." and "..", These names don't refer to just one directory in the file system. They are are links inside every directory to refer to the current directory and the parent directory respectively. 
 - We can refer to files in the current directory as ./filename when running commands.
@@ -30,7 +30,7 @@ When a program runs on a Linux or UNIX system, the kernel starts a process to ex
 
 Processes are like bubbles that contain all the guts of a running program. The kernel inflates the bubbles (by creating processes), controls the flow of bubbles, and tries to keep them from popping one another. 
 - The kernel juggles the CPU among all of the active processes, scheduling each one so that the system's processor can be shared among the processes. 
- ![499e065a93567f0aec0e4703cbc0937b.png](../../_resources/499e065a93567f0aec0e4703cbc0937b.png)
+ ![499e065a93567f0aec0e4703cbc0937b.png](../_resources/499e065a93567f0aec0e4703cbc0937b.png)
  
  Many processes on Linux and UNIX systems run in the background performing critical system functions, such as spooling pages to be sent to a printer, providing network services such as file sharing or Web access. These background processes are known as daemons. 
  - Daemons are commonly given names based on the function they perform, followed by a "d" to indicate they are a daemon. For example the SSH daemon (sshd) allows users and administrators to access the system securely across the network using a command line. 
@@ -63,7 +63,7 @@ To summarize, there are two basic types of network services on a Linux or UNIX m
 Beyond init, inted, and xinetd, another way to automatically start processes is through the ```cron``` daemon. This daemon is used to schedule the running of specific system commands and programs at predetermined times. 
 - This is widely used by System Administrators
 - Cron reads one or more configuration files called crontabs to determine what to run and when to run it. Common locations of crontab files are ```/usr/lib/crontab``` and ```/etc/crontab```
-![a54a451737b7fea570fea1e00f26e827.png](../../_resources/a54a451737b7fea570fea1e00f26e827.png)
+![a54a451737b7fea570fea1e00f26e827.png](../_resources/a54a451737b7fea570fea1e00f26e827.png)
 
 ### Manually Starting Processes
 Init, inetd (or xinetd), and cron automatically start processes running on a machine. Of course, users and administrators can manually start processes as well. 
@@ -81,7 +81,7 @@ It is very dangerous to have the current working directory in your search path.
 ### Interacting with Processes
 The kernel assigns each running process on a machine a unique process ID (called PID), which is a number used to refer to the process. You can use the ```ps``` command to generate a list of processes running on the machine.
 
-![c128b991d923e2422f8b339ab78c1de5.png](../../_resources/c128b991d923e2422f8b339ab78c1de5.png)
+![c128b991d923e2422f8b339ab78c1de5.png](../_resources/c128b991d923e2422f8b339ab78c1de5.png)
 
 Can also use ```lsof``` to print every file that every process on your system is accessing.
 - You can run ```lsof``` by itself to get an enormous amount of information about every file that every process on your system is accessing or you can take the output and feed it through a pipe to the ```grep``` command to find specific patterns
@@ -102,7 +102,7 @@ To log in to a Linux or UNIX machine, each user must have an account on the syst
 
 ## The ```/etc/passwd``` File
 Accounts are created and managed using the ```/etc/passwd``` file, which contains one line for each account on the machine. An example ```/etc/passwd``` file might contain the following information:
-![6a27644079fa6d13a9141dae059ce5d2.png](../../_resources/6a27644079fa6d13a9141dae059ce5d2.png)
+![6a27644079fa6d13a9141dae059ce5d2.png](../_resources/6a27644079fa6d13a9141dae059ce5d2.png)
 
 Each line in the ```/etc/passwd``` file contains a description of one account, with parameters separated by a colon. The parameters are as follows:
 - **Login Name**: This field contains the name of the account. A user logs into the machine using this name at the login prompt
@@ -117,7 +117,7 @@ Sometimes passwords are moved to the shadow file instead of the ```passwd``` fil
 
 ## The ```/etc/group``` File
 When administering a system, handling the permissions of each individual user account can be a lot of work. To help simplify the process, Linux and UNIX include capabilities for grouping users and assigning different permissions to the resulting groups. All groups are defined in the ```/etc/group``` file, which has one line for each group defined on the machine. A common ```/etc/group``` file might look like this:
-![d50aba05bc4a7858eab381479e32ed74.png](../../_resources/d50aba05bc4a7858eab381479e32ed74.png)
+![d50aba05bc4a7858eab381479e32ed74.png](../_resources/d50aba05bc4a7858eab381479e32ed74.png)
 
 The format of the ```/etc/group``` file includes the following fields, each separated by colons:
 - **Group name**: This field stores the name of the group
@@ -134,17 +134,17 @@ The single most important and powerful account on Linux and UNIX systems is the 
 Linux and UNIX file permissions are broken down into 3 areas: permissions associated with the owner of the file, permissions assigned to the owner group, and permissions for everyone. 
 - For each of these three areas, at least three kinds of access are allowed: read, write, and execute. With three areas (owner, group owner, and everyone), there are 9 different standard permission settings. 
 - Use the ```ls -l``` command to see permissions assigned to the files in a given directory. 
-![2d38c5c43d0e89fda0348b0ecdb3526b.png](../../_resources/2d38c5c43d0e89fda0348b0ecdb3526b.png)
+![2d38c5c43d0e89fda0348b0ecdb3526b.png](../_resources/2d38c5c43d0e89fda0348b0ecdb3526b.png)
 
 The next nine characters after the file designator indicate the permissions for each directory:
-![f6be9d3ad753f2b90fdeb0525d8a4621.png](../../_resources/f6be9d3ad753f2b90fdeb0525d8a4621.png)
+![f6be9d3ad753f2b90fdeb0525d8a4621.png](../_resources/f6be9d3ad753f2b90fdeb0525d8a4621.png)
 
 Permissions for each file can be altered using the ```chmod``` command. Suppose we had a file named ```foo``` that we wanted to have full control (read, write, and execute) capabilities for its owner account, we want it to be readable by the owner group, and we want everyone to be able to read and execute it. The desired permission set would be ```rwxr--r-x```, or converted to binary ```111 100 101```. The resulting octal representation would be 745. We set these permissions using this command:
 - ```# chmod 745 foo```
 
-![aff80ce3f858a43a526b804a68e0d663.png](../../_resources/aff80ce3f858a43a526b804a68e0d663.png)
+![aff80ce3f858a43a526b804a68e0d663.png](../_resources/aff80ce3f858a43a526b804a68e0d663.png)
 
- ![acd999f2cefc7b1fac38e5f633c36fda.png](../../_resources/acd999f2cefc7b1fac38e5f633c36fda.png)
+ ![acd999f2cefc7b1fac38e5f633c36fda.png](../_resources/acd999f2cefc7b1fac38e5f633c36fda.png)
  
  ## SetUID Programs
  Sometimes users or processes have a legitimate reason for accessing a file for which they don't have assigned permissions. Consider what must happen for users to change their own password. The user has to edit his or her account entry in the ```/etc/passwd``` or ```/etc/shadow``` file. However, the ```/etc/passwd``` or ```/etc/shadow``` files can only be altered with super-user-level permissions. 
@@ -161,18 +161,18 @@ Therefore to change the file from our earlier example, ```foo```, to run SetUID,
 The leading "4" is the octal equivalent of the binary "100", meaning that the SetUID bit is set, whereas the SetGID bit and sticky bit are not. 
 
 When the ```ls``` command is used to display permissions, it does indicate which files are SetUID by overwriting the x for the file's owner with an ```s``` character, as shown below:
-![50fb87a559cc20558b5c5d373c59eebc.png](../../_resources/50fb87a559cc20558b5c5d373c59eebc.png)
+![50fb87a559cc20558b5c5d373c59eebc.png](../_resources/50fb87a559cc20558b5c5d373c59eebc.png)
 
 Any program that is SetUID, particularly ones created by root, must be carefully constructed to make sure that a user cannot exploit the program. If attackers have an account on a system and can run SetUID programs, they can attempt to break out of the SetUID program to gain increased privileges. 
 
 To find all SetUID programs on a UNIX machine, you can run the following command as a root-level user:
-![558f8587898a8a60d1fe441e7edacbc8.png](../../_resources/558f8587898a8a60d1fe441e7edacbc8.png)
+![558f8587898a8a60d1fe441e7edacbc8.png](../_resources/558f8587898a8a60d1fe441e7edacbc8.png)
 
 
 # Linux and Unix Trust Relationships
 Linux or Unix machines can be configured to trust each other, an operation that can make the systems simpler to administer, but potentially impacting security. 
 
-![3c3a5a51ab8a38b9fb071c0eafb25d06.png](../../_resources/3c3a5a51ab8a38b9fb071c0eafb25d06.png)
+![3c3a5a51ab8a38b9fb071c0eafb25d06.png](../_resources/3c3a5a51ab8a38b9fb071c0eafb25d06.png)
 
 This trust can be implemented in Linux and UNIX systems using the system-wide ```/etc/hosts.equiv``` file or individual users' ```.rhosts``` files, along with a series of UNIX tools known collectively as r-commands. The ```/etc/hosts.equiv``` file contains a list of machine names or IP addresses that the system will trust (i.e, allow unauthenticated access of users from the given machine). 
 - Similarly users can create a file called ```.rhosts``` in their home directories setting up trust between machines. 
