@@ -521,4 +521,349 @@ Another nice feature of John is its ability to detect automatically the particul
 - This autodetect capability is based on the character set, length, and format of the given file containing the passwords.
 - Although the autodetect function is nifty, the absolute greatest strength of John is its ability to create many permutations quickly for password guesses based on a single wordlist.
 - Quite simply, John has the best hybrid guessing engine available publicly today
+
+With all of this slicing and dicing of words to create password guesses, John acts like a dictionary food processor. 
+- The process of creating permutations for password guesses is defined in a user-configurable rule set
+- The default rules that John ships with are exceptionally good, and most users won't have to tinker with them. 
+
+When conducting a password-cracking attack, John supports several different modes of operation including the following:
+- "Single-crack" mode: This mode is the fastest and most limited mode suppported by John. It bases its guesses only on information from the user account, including the account name and General Electric Computer Operating System (GECOS) field, a block of arbitratry text associated with each account. 
+- Wordlist mode: As its name implies, this mode guesses passwords based on a dictionary, creating numerous permutations of the words using the rule set.
+- Incremental mode: This is John's mode for implementing a complete brute-force attack, trying all possible character combinations as password gueses. A brilliant feature of this mode is to use character frequency tables to ensure the most widely used characters have a heavier weighting in the guessing.
+- External mode: You can create custom functions to generate guesses using this external mode
+
+By default, John starts using single-crack mode, moves onto wordlist mode, and finally tries incremental mode. Even in the face of all of this flexibility, John's default values are well tuned for most password-cracking attacks. By simply executing the John program and feeding it an unshadowed password file, the attacker can quickly and easily crack passwords, as shown below. 
+
+![557166eee62568c68d8a1836dcfe732e.png](../_resources/557166eee62568c68d8a1836dcfe732e.png)
+
+While John is running, it displays successfully cracked passwords on the screen, and stores them in a local file called john.pot. 
+-	Always make sure to clean up after yourself by removing john.pot files
+
+## Defenses Against Password-Cracking Attacks
+Cain and John the Ripper represent the best of breed password-cracking tools, and can quickly determine passwords in most environments. In my experience at numerous organizations, Cain or John often return dozens of passwords after running for a couple of minutes.
+- To defend against password-cracking attacks, you must make sure your users do not select passwords that can be easily guessed by an automated tool. 
+
+### Strong Password Policy
+A strong password policy is a crucial element in ensuring the security of your systems. Your organization must have an explicit policy regarding passwords, specifying a minimum length and prohibiting the use of dictionary terms. 
+- Passwords should be at least nine characters long, and should be required to include nonalphanumemric characters.
+
+In reality, we should push to have a limit of 15 or more characters. 
+- This is because if you set a password to 15 characters or more, the system will not store a LM hash at all for that password, instead relying solely on the stronger NT hash in the SAM database. 
+
+Furthermore, passwords should have a defined max lifetime of 90, 60, or 30 days, depending on the particular security sensitivity and culture of your organization. 
+
+### User Awareness
+To comply with your password policy, users must be aware of the security issues associated with weak passwords and be trained to create memorable, yet difficult-to-guess passwords. 
+- A security awareness program covering the use of passwords is very important. 
+
+### Password Filtering Software
+To help make sure users do not select weak passwords, you can use password filtering tools that prevent them from setting their passwords to easily guessed values.
+- When a user establishes a new account or changes his or her password on a system, these filtering programs check the password to make sure that it meets your organization's password policy. 
+
+For filtering software to be effective, it must be isntalled on all servers where users establish passwords, including UNIX servers, Windows Domain Controllers, and other systems. 
+
+### Where Possible, Use Authentication Tools Other Than Passwords
+Of course, on of the main reasons we have this password-cracking problem in the first place is our excessive use of traditional reusable passwords.
+- If you get rid of access through passwords, you deal a significant blow to attackers trying to utilize password-cracking program.
+- For particularly sensitive systems or authentication across untrusted networks, you should avoid using traditional password authentication.
+- Instead consider one-time password tokens or smart cards for access.
+
+### Conduct Your Own Regular Password-Cracking Tests
+To make sure your users are selecting difficult-to-guess  passwords and to find weak passwords before an attacker does, you should conduct your own periodic password-cracking assessments.
+- Make sure you have permisson from management prior to conducting this exercise
+
+### Protect Your Encrypted or Hashed Password Files
+A final very important technique for defending against password-cracking tools is to protect your encrypted or hashed passwords.
+- If the attackers cannot steal your password file or SAM database, they will not be able to crack your passwords enmasse. 
+- On all Linux systems that support it, make sure that you activate password shadowing, which stores password representations in the ```/etc/shadow``` file readble only by root. 
+- For Windows, disable the incredibly weak LM representation
+
+Finally, whenever you make a backup using the Ntbackup.exe program, remember to delete or alter the permissions on the copy of the SAM database stored in the %systemroot%\repair\sam._ file. 
+- Using these techniques, you can significantly lower the chances of an attacker grabbing your password hashes. 
+
+# Web Application Attacks
+SSL is not a one solution to fix to preventing web attacks, there are plently of web attacks that exist despite SSL and TLS applications. 
+
+## Account Harvesting
+Account harvesting is a good example of a technique that has been applied to all kinds of systems for decades, but now seems to be a particular problem with Web applications. 
+- Using this technique, an attacker can determine legitimate user IDs and even passwords of a vulnerable application. 
+- Account harvesting is really a simple concept, targeting the authentication process when an application requests a user ID and password. 
+
+Consider the error message screens for the application shown below. These screens are from a proprietary Web applicatoin called Mock bank. The first screen shows what happens when a user types in a wrong user ID, and the second shows what happens when a user types in a correct user ID and incorrect password. 
+![50833aa9079b6e01432dbd353e82cefd.png](../_resources/50833aa9079b6e01432dbd353e82cefd.png)
+
+![8cc6142adc12bad8a964b30dd1b343a6.png](../_resources/8cc6142adc12bad8a964b30dd1b343a6.png)
+
+The actual HTML and appearance of the browser in both pages are identical. However, look at the locatoin line in the browers of each figure a bit more closely. 
+- Notice that when the user ID is incorrect, error nummber 1 is returned
+- When the user ID is valid and the password is wrong, error number 2 is returned. This discrepancy is exactly what an attacker looks for when harvesting for credentials. 
+
+Based on this difference in error messages in the URL, an attacker can write a custom script to interact with the Web application, conducting a dictionary or brute-force attack guessing all possible user IDs, and using an obviously fake password. 
+- The script will try each possible user ID. If an error message is returned indicating that the user ID is valid, the attacker's script writes the user ID to a file, otherwise the next guess is tested. 
+- This is pure user ID guessing through scripting, adding a bit of intelligence to discriminate between invalid and valid user IDs. 
+- In this way, an attacker can harvest a large number of valid user Ids from the target application. 
+
+After running a script to harvest good user IDs, the attacker can try to harvest passwords. If the target applicatoin doesn't lock out user accounts due to a given number of invalid password attempts, the attacker can write another script or use the Brutus or Hydra tools we discussed earlier in this chapter to try password guessing across the network
+
+## Account Harvesting Defenses
+For all of your Web applications, you must make sure that you use a consistent error message when a user types in an incorrect user ID or password.
+- Rather than telling the user, "Your user ID was incorrect", or "Your password was incorrect," your application should contain a single error message for improper authentication information. 
+
+
+## Undermining Web Application Session Tracking And Other Variables
+Another technique commonly used to attack Web applications deals with undermining the mechanisms used by the Web application to track user actions. After a user authetnciates to a Web application (by providing user ID and password, or through a client-side certificate on an HTTPS session), most Web applications generate a session ID to track the user's actions for the rest of the browsing session of that site. 
+- The Web application generates a session ID and passes it to the client's browser, esentially saying, "Hold this now and give it back to me every time you send another request for the rest of this session". 
+- This session ID is passed back and forth across the HTTP or HTTPS connection for all subsequent interactions that are part of the session, such as browsing web pages, entering data into forms, or conducting transactions.
+- The application uses this information to track who is submitting the request. In essence, the session ID allows the Web application to maintain the state of a session with the user.
+
+Note that a session ID can have any name the application developer or the development environment used to create the Web application assigned to it.
+
+Furthermore, a session ID is completely independent of the SSL connection in the vast majority of applications. 
+- The session ID is application-level data, generated by the application and exchanged by the Web browser and Web server. 
+- Although it is encrypted by SSL as it moves across the network, the session ID can be altered at the browser by the browser user without impacting the underlying SSL connection. 
+
+### Implementing Session IDs in Web Applications
+So how do WEb applications implement session IDs? Three of the most popular techniques for transmitting session IDs are URL session tracking, hidden form elements, and cookies. 
+
+For URL session tracking, the session ID is written right on the brower's location line, as shown below, and passwed as a parameter in an HTTP GET request. For all subsequent Web requests, the URL is passed back to the server, which can read the session ID from this HTTP field and determine who submitted the request. 
+![d219720fcfb3506dd0ce7116f63655f1.png](../_resources/d219720fcfb3506dd0ce7116f63655f1.png)
+
+A second technique for tracking session IDs invovles putting the session ID information into the HTML itself, using hidden form elements. With this technique, the Web application sends the browser an HTML form with elements that are labeled as hidden
+- One of these form elements includes the session ID. When it dispalys the Web page, the browser does not show the user these hidden elements, but the user can readily see them simply by invoking the browser's view source function for the page.
+- In the raw HTML, a hidden form element will have the following appearance. 
+```
+<INPUT TYPE="HIDDEN" NAME="Session" VALUE="34112323">
+```
+
+Cookies are the most widely used session tracking mechanism. A cookie is simply an HTTP field that the browser stores on behalf of a Web server.
+- A cookie contains whatever data the server wants to put into it, which could include user preferences, reference data, or a session ID. 
+- There are 2 types of cookies: persistent cookies and nonpersistant cookies. 
+- A persistent cookie is written to the local file system when the browser is closed, and will be read the next time the browser is executed. There store the most long-term user preferences
+- Nonpersistent cookies are stored in the browser's memory and are deleted when the browser is closed. This has a short life, but is primarily used to implement session IDs. 
+
+## Attacking Session Tracking Mechanisms
+Many Web-based applications have vulnerabilities in properly allocating and controlling these session IDs.  An attacker might be able to establish a session, get assigned a session ID, and alter the session ID in real time.
+- For applications that don't handle session tracking properly, if the attacker changes the session ID to a value currently assigned to another user, the application will think the attacker's session belongs to that other user. 
+- In this way, the attacker usurps the legitimate user's session ID, a process sometimes referred to as session cloning. 
+- As far as the application is concerned, the attacker becomes the other user. 
+
+Applications can't use IP addresses to determine who has the accurate session ID because IP addresses can change in the middle of the session or the user might be using a single proxy or many-to-one dynmaic NAT device, which maps multiple hosts to one IP address. 
+
+An application with predictable session credentials allows an attacker to do anything a legitimate user can do. 
+
+To perform this kind of attack, the bad guy first needs to determine another user's session ID. To accomplish this, the attacker logs in to the application using a legitimate account assigned to the attacker, and observes the session ID assigned to that session.
+- The attacker looks at how long the session ID is and the types of characters (numeric, alphabetic, or others) that make it up. 
+- The attacker then writes a script to log in again, and again, gathering hundreds of sessoin IDs to determine how they change over time or to see if they are related in any way to the user ID. 
+- Then, applying some statistical analysis to the sampled session IDs, the attacker attempts to predict session IDs that belong to other users.
+
+So how does an attacker actually manipulate the session ID?
+1. First, the attacker logs in to the application using his or her own account to be assigned a session ID.
+2. Second, the attacker attempts to modify this session ID to clone the session of another user.
+3. For many session tracking mechanisms, such modifications are trivial. With URL session tracking, the attacker simply types over the session ID in the URL line of the browser. 
+4. The attacker then edits the session ID in the hidden form elements of the local copy of the Web page, and reloads the local page into the browser. By simply submitting the form back to the server, the attacker can send the new session ID and could clone another user's session. 
+
+If sessions are tracked using persistent cookies, the attacker can simply edit the local cookie file. 
+- In Mozilla Firefox and Netscape browsers, all persistent cookies are stored in a single file called ```cookies.txt```. 
+- For Internet Explorer, cookies from different servers are stored in their own individual files in the Temporary Internet Files directory for each user. 
+- An attacker can edit these persistent cookies using any text editor as shown below 
+- To exploit a session ID based on a persistent cookie, the attacker can log in to the application to get a session ID, close the browser to write the cookie file, edit the cookies using his or her favorite text editor, and relaunch the browser, now using the new session ID. 
+- The browser must be closed and relaunched during this process because persistent cookies are only written and read when the browser is closed and launched.
+![4a5ac977a5949d2e1f54e69f483d45d3.png](../_resources/4a5ac977a5949d2e1f54e69f483d45d3.png)
+
+Editing persistent cookies is trivial. But how can an attacker edit nonpersistent cookies, which are stored in the browser's memory and are not written to the local file system? 
+- Many Web application developers just assume that a user cannot view or alter nonpersistent cookies, especially those passed via SSL, so they don't bother worrying about protecting the information stored in such cookies. 
+
+Unfortuantely, attackers use very powerful techniques for altering nonpersistent cookies. To accomplish this, Web application attackers most often rely on a specialized Web proxy tool designed to manipulate Web applications. 
+- A web application manipulation proxy sits between the browser and the server, as shown in the figure below.
+- All HTTP and HTTPS gets channeled through the proxy, which gives the attacker a window to view and alter all of the information passed in the browsing session, includign nonpersistent cookies. 
+- Thus, the bad guy has a very fine-grained level at which to modify any cookies that are passing by. 
+- What's more, these specialized proxies let the attacker edit any raw HTTP/HTTPS fields and HTML information including cookies, hidden form elements, URLs, frame defintions, and so on. 
+![44dd8bedd851be25c45e0ba09c5b21db.png](../_resources/44dd8bedd851be25c45e0ba09c5b21db.png)
+
+It is crucial to note that these Web application manipulation attacks are not person-in-the-middle attacks where a bad guy changes another user's data going to the application. 
+- In these Web application manipulation attacks, the bad guy controls both the browser and the proxy. 
+- Attackers use the proxy to alter their own data going to and from the web application, including session ID numbers and other variabels. 
+- The attacker applies the browser and Web application manipulation proxy in tandem: The browser browses, while the proxy lets the attacker change the elements inside the HTTP and HTML itself. 
+
+Because this proxy concept is so powerful in attacking Web applications, various security developers have released a large number of these Web application manipulation proxies, both on a free and a commerical basis. 
+
+WebScarab is a free, open source, and actively updated web proxy, with a modular interface for adding new tools and features. You can find WebScarab on www.owasp.org
+
+To launch this kind of attack, the bad guy runs the browser and the Web application manipulation proxy, either on separate systems or on a single machine. 
+- When the browser or server sends data, our proxy intercepts it, allowing it to be edited before passing on. 
+- In this way, the proxy pauses the browsing session, giving the attacker a chance to alter it. 
+
+Most Web application manipulation proxies support HTTPS connections, which are really just HTTP connections protected using SSL. 
+- To accomplish this, as displayed in the figure below, the proxy sets up two SSL connections: one session between the browser and the proxy, and the other between the proxy and the web server. 
+- All data is encrypted at the browser and sent to the proxy. 
+**Handling HTTPS with a Web application manipulation proxy**
+![180dfbcde28fc88f487c0eb69354fa70.png](../_resources/180dfbcde28fc88f487c0eb69354fa70.png)
+
+At the proxy, the data is decrypted and displayed to the attacker, letting the bad guy alter it. Then, the data is encrypted across another, separate SSL session and sent to the victim Web server.
+- When a response is served up by the server, the same process is applied in the opposite direction. 
+- The web server never knows that there is a proxy in the connection. 
+
+As we've seen, an attacker can modify session credentials using these Web application maniuplation proxies, but session credentials only scratch the surface.
+- Many Web applications send a great deal of additional variables to the browser for temporrary or permanent storage in cookies or hidden form elements.
+- Using a proxy, the attacker can also view or edit any of these very enticing items passed to the browser. 
+- Some applications pass back account numbers, balances, or other critical information in cookies, expecting that they will remain unchanged and trusting them when they return from the browser. 
+
+Of particular interest are Web applications taht pass back a price to the browser, such as an e-commerce shopping cart. Of course, an e-commerce application has to pass back a price so that customers can see on the screen how much they are spending, but taht price shhould only be displayed on the screen. 
+
+In such appliacations, the server sends the price to the browser in the form of a cookie or hidden form element, and the browser sends the price back to the server for each subsequent interaction to maintain the shopping cart or add to it.
+- There is nothing to say that the user can't edit the price in the cookie or hidden form lement while it's at the browser or in a Web proxy. 
+- An attacker can watch the price go through a web proxy, edit it at the proxy, and pass it back to the server.
+- The big question is whether the server will trust the modified price. 
+
+For example, consider a web app that sells $50 shirts on the internet. The price is displayed on the screen in HTML, but is also passed in a cookie in a shopping cart. 
+- The attacker can use web application maniupluation to edit that cookie to say, "The $50.00 shirt is now changed to ten cents"
+- The price will be sent to the Web application, and if the web application is vulnerable, the attaker will get a shirt for ten cents or even free. 
+- The web application doesn't need to send the price in the cookie. It should only send a product stock-keeping unit (SKU) number or some other reference to the product, but not its price.
+
+## Defending Against Web Application Session Tracking And Variable Alteration Attacks
+To defend your web applications from this type of attack, you must ensure the integrity of all session tracking elements and other snesitive variables stored at the browser, whether they are implemented using URLs, hidden form elements, or cookies. To accomplish this, use the following techniques for protecting variables sent to the browser:
+- Digitally hash or sign the variables using a cryptographic algorithm, such as a Hash-Based Message Authentication Code (HMAC), as shown below.
+	- When the application needs to pass a variable back to the browser, it creates a hash of the variable using a secure hash algorithmn with a secret key known only to the web application on the web server.
+	- The variable and this hash are sent to the user. Evil users who try to change the data (and even the hash itself) will not be able to create a matching hash of their changed data, because they don't know the secret key.
+	- Thus, the application can perform an integrity check of all returned values to make sure their data and hashes match, using that secret key. 
+	- **Applying an Integrity Check to a variable passed to a browser using HMAC algorithm**
+	![70f75471f7b47e4efb82bc5a9f3ae596.png](../_resources/70f75471f7b47e4efb82bc5a9f3ae596.png)
+	
+- If you are passing multiple variables in a single cookie, be careful when concatenating all of them together and loading them into a single cookie.
+- Encrypt the information in the URL, hidden form element, or cookie. Don't just rely on SSL, which protects data in transit. In addition to SSL, use some form of encryption of sensitive variables
+- Make sure your session IDs are long enough to prevent accidental collisiion. They should be at least 20 characters long
+- Consider making your session IDs dynamic, changing from page to page throughout your Web application. That way, an attacker will have a harder time crafting specific session ID numbers for specific users.
+
+If a session ID is improperly protected on a single page, an attacker could find this weakness, clone another user's session on that page, and move on to the rest of the application as that user.
+
+Additionally, defenders can use specialized Web proxy tools to help defend against these attacks. The commerical products AppShield from Watchfire and InterDo by Kavado sit in front of a web application and look for incoming requests in which an attacker manipulated a cookie or other state element that is supposed to remain static for a given browsing session. 
+
+## SQL Injection
+Another weakness of many Web applications invovles problems with accepting user input and interacting with back-end databases. Most web applications are implemented with a back-end database that uses Structured Query Language (SQL). 
+- Based on interactions with a user, the web application accesses the backend database to search for information or update fields. 
+- For most user actions, the application sends one or more SQL statements to the database that include s
+- earch criteria based on information entered by the user. 
+- By carefully crafting a statement in a user input field of a vulnerable web application, an attacker could extend an application's SQL statement to extract or update information that the attacker is not autheorized to access. 
+
+To accomplish this, the attackers first explore how the Web application interacts with the back-end database by finding a user-supplied input string that they suspect will be a part of a database query (e.g, user name, account number, product SKU, etc).
+- The attacker then experiments by adding quotation characters and command delimiters (i.e.,;) to the user data to see how the system reacts to the submitted information.
+- In many databases, quotation characters are used to terminate string values entered into SQL statements. 
+
+Additionally, semicolons often act as separating points between multiple SQL statements.
+- Using a considerable amount of trial and error, the attacker attempts to determine how the application is interacting with the SQL database. 
+- A trial-and-error process is involved because each Web application formulates queries for a back-end database in a unique fashion. 
+
+To get a feel for how SQL injection works, let's look at a specific example from a tool called WebGoat, a free Web applicatoin available for download from www.owasp.org. 
+- WebGoat implements a simulated e-commerce application, where users can pretend to buy HDTV equipment and other items.
+- However, like the Mock Bank application we looked at earlier, WebGoat is full of various Web vulnerabilities
+- By downloading WebGoat and experimenting with it in your lab on a Windows or Linux machine, you can improve your Web application assessment skills in a mock environment. 
+
+WebGoat is an ideal tool for learning as shown below.
+- It includes complete lessons plans, a report card on users' progress so far, and almost two dozen different common web application flaws (including SQL injection issues, as well as authentication and session tracking flaws similar to those we discussed earlier). 
+**WebGoat is a great environment for learning Web application security assessment techniques** 
+![6f4e271147928e28cba15987f53e3248.png](../_resources/6f4e271147928e28cba15987f53e3248.png)
+
+One of the flaws designed into WebGoat invovles SQL injectoin. The application lets users review their credit card numbers stored in the application, based on their account numbers. 
+- As illustrated in the figure below, the user Joe Snow has two credit numbers entered into the application
+![f8fde481b7f016e22958d67ce62aa7e9.png](../_resources/f8fde481b7f016e22958d67ce62aa7e9.png)
+
+
+Now suppose this Joe Snow user is evil. For SQL injection attacks, this bad guy might start out by entering quotation characters into the application as part of an account number. 
+- Remember, many SQL environments treat quotation characters as important terminators of strings. 
+- By sending an additional quotatoin character, the attacker might be able to generate an error message from the back-end database.
+
+In the figure below,the evil Joe Snow has submitted an account number of 101". 
+- Those closed quotes at the end are going to cause problems in the application
+- As a helpful hint about what's going on, WebGoat displays the SQL statement that will be used to query the back-end WebGoat database:
+- ```SELECT * FROM user_data WHERE userid = 101```
+![4cf0f630066d59c459a425cf3a64515d.png](../_resources/4cf0f630066d59c459a425cf3a64515d.png)
+
+Of course, real-world applications wouldn't display the SQL itself, but WebGoat does for training purposes. Unfortunately, the application blindly takes anything entered by the attacker in the HTML form and puts it after the ```userid=``` portion of the SQL statement. 
+- If Joe Snow just enters a number, the application performs as expected, looking up the account information for that account number. However, if the attacker enters quotation marks, the resulting SQL becomes:
+- ```SELECT * FROM user_data WHERE userid = 101"```
+
+Those quotation marks at the end are the problem. Databases don't like to see such things, because they are syntax errors in SQL. Thus, the application indicates this error to Joe Snow by printing out that ugly ODBC Microsoft Access Driver message.
+- Although that error might be ugly to most users, for evil Joe Snow, its gold.
+- Any time an application responds with a syntax, SQL, SQL Syntax, ODBC, or related error message, we've got a major sign that the application is vulnerable to SQL injection. 
+
+Now to really attack this application, the bad guy injects a little SQL logic into the target application. This time, the bad guy types an account number of 101 or "TRUE". The resulting SQL created by the application will be:
+
+```
+SELECT * FROM user_data WHERE userid = 101 or 'TRUE'
+```
+
+Because we use a logical OR combined with the qualifer of ``` TRUE ``` anything we append to OR will equate to a True statement. 
+
+Our example from WebGoat showed injection techniques for SQL query statements (a SELECT command in particular). Injected ```UPDATED``` commands can allow an attacker to modify data in the database. Ultimately, if attackers carefully construct commands within SQL, they can get raw access to the back-end database. 
+
+## Defenses Against SQL Injection 
+To defend against SQL injectoin and related attacks through user input, your Web application must be developed to filter user-supplied data carefully. Remember, the application should never trust raw user input. 
+- It could contain injected commands and all kinds of general nastiness
+
+In particular, the application should screen out the following list of scary characters:
+- Quotes of all kinds (', ', ", ", - String terminators
+- Semicolons (;) - Query terminators
+- Asterisk (*) - Wildcard selectors
+- Percent signs (%) - Matches for substrings
+- Underscore (_)- Matches for any character
+- Other shell metachracters (&\|*?~<>^()[]{}$\n\r), which could get passed through to a command shell, allowing an attacker to execute arbitrary commands on the machine. 
+
+Your best bet is to define which characters your application requires and filter out the rest of the riff-raff users send you. 
+
+For those characters that might be dangerous but really necessary, introduce an escape sequence or substitute. One popular method of substituting innocuous replacements involves using an & and two letters to represent an otherwise scary character. For example, an apostrophe (*) can be changed to &ap, less than (<>) can become &lt, and so on. 
+
+Don't let your Web application have database administrator capabilites on your database! 
+
+In this section, we've looked at three of the most common attacks against Web applications, namely account harvesting, state manipulation, and SQL injection. 
+- These are three of the biggest Web application attacks, but there are many other vulnerabilities that Web applications could face, including cross-site scripting and command injection among many others. 
+- To learn about such flaws, the single best source freely available on the Internet is the Open Web Application Security Project (OWASP) at *www.owasp.org*. 
+- Everything created by OWASP is free and open source. 
+
+## Exploiting Browser Flaws
+Thus far, we've focused on attacking Web applications involving bad guys under mining the logic that lives on Web servers for nefarious purposes. 
+- However, a significant and scary trend invovles attackers coopting e-commerce sites and using them as a delivery mechanism for malicious code to vulnerable Web browsers. 
+
+Here is the flow of these increasingly common types of attacks:
+1. The attacker takes over some e-commerce or other trusted site on the internet. the attacker installs code on this site that can exploit brwoser vulnerabilities.
+2. An innocent victim surfs to the infected web site
+3. The infected web site responds with a web page that exploits the browser
+4. based on the exploitation of step 3, the browser connects to the attacker's site and grabs some malicious code from it, such as a keystroke logger, a bot, or a worm.
+5. The evil code on the victim's machine now runs, doing nasty stuff to the user, such as stealing his or her keystrokes. 
+
+![f03b76aa7fc8519da4a88a6c1f10e5d0.png](../_resources/f03b76aa7fc8519da4a88a6c1f10e5d0.png)
+
+## Defending Against Browser Exploits
+These browser-based exploits are an increasing threat, but how do you defend against such attacks?
+
+First keep your browsers patched. If there's a new hole reported in a browser, make sure to patch it immediately.
+
+Next utilize an up-to-date antivirus tool on all systems, especially those machines that browse the Internet. 
+
+
+
 # Summary
+
+Using info gained from the recon and scanning phases, attackers attempt to gain access to systems.The techniques employed during Phase 3, gaining access, depend heavily on the skill level of the attacker. Less experienced attackers use exploit tools developed by others, available at a variety of Web sites. More sophisticated attackers write their own customized attack tools and employ a good deal of pragmatism to gain access. This chapter explores techniques for gaining access by manipulating applications and operating systems. 
+
+Buffer overflows are among the most common and damaging attacks today. They exploit software that is poorly written, allowing an attacker to enter input into programs to execute arbitrary commands on a target machine. 
+- When a program does not check the length of input supplied by a user before entering the input into memory space on the stack or heap, a buffer overflow could result.
+- By rewriting the return pointer on the stack, the attacker can make the target system run the executable code. 
+- For heap-based buffer overflows, an attacker can manipulate other variables in the heap, and possibly execute malicious code. 
+
+Exploitation frameworks like Metasploit help automate the production and use of exploits, such as stack-based and heap-based buffer overflows. These tools let attacker write modular exploits and payloads, tying the two together in an, easy-to-use interface. 
+
+Defenses against buffer overflow attacks include applying security patches in a timely manner, filtering incoming and outgoing traffic, and configuring systems so that their stacks cannot be used to store executable code. Software developers can also help stop buffer overflows by utilizing automated code-checking and compile-time stack protection tools. 
+
+Password attacks are also very common. Attackers often try to guess default passwords for systems to gain access, by hand or through using automated scripts. Password cracking involves taking encrypted or hashed passwords from a system and using an automated tool to determine the original passwords. 
+- Password-cracking tools create password guesses, encrypt or hash the guesses, and compare the result with the encrypted or hashed passwords. 
+- The password guesses can come from a dictionary, brute-force routine, or a hybdrid technique.
+- Cain is one of the best tools for cracking passwords on Windows machines. 
+- On UNIX systems (as well as Windows), John the Ripper is excellent. 
+
+Attackers employ a variety of techniques to undermine Web-based applications. Some of them most popular techniques are account harvesting, undermining Web application session tracking and variables, and SQL injection. Account harvesting allows an attacker to determine account numbers based on different error messages returned by an application. To defend against this technique, you must make srue your error messages regarding incorrect user IDs and passwords are consistent. 
+
+Attackers can undermine Web application session tracking by manipulating URL parameters, hidden form elements, and cookies to try to clone another user's session. To defend against this technique, make sure your applications use strong session tracking information that cannot easily be determined by an attacker and protect all variables passed to a browser. 
+
+SQL injection allows attackers to extend SQL statements in an application by appending SQL elements to user input. The technique allows attackers to extract or update additional information in a back-end database behind a web server. To protect your applications from this technique, you must carefully screen special characters from user input and make sure your web application logs in to a database with minimal privileges.
+
+Numerous browser-based vulnerabilities let an attacker take over a browsing machine that surfs to an infected Web server. By compromsing trust web servers, attackers can spread their browser exploits to a large population. To defend against such attacks, keep your browsers patched, and utilize up-to-date antivirus tools. 
